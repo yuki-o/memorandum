@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="クラス,小川,優樹,C言語,C++,Java,C#,Objective-C,PHP,JavaScript">
+	<meta name="author" content="小川優樹">
+	<title>プログラミング備忘録</title>
+</head>
+<body>
+	<xmp theme="cerulean" style="display:none;">
+
+## ~ クラス ~
+
+### C言語
+なし
+
+---
+
+### C++
+1. クラス宣言の } 直後のセミコロンを忘れずに。
+2. アクセス修飾子は範囲毎に設定する。
+3. アクセサは自動生成されないので、他のメンバ関数と同様に宣言する必要がある。
+4. コンストラクタでのメンバ変数の初期化は、コンストラクタ初期化子 : を用いて行う。
+5. インスタンスを、スタック領域に確保する方法と、ヒープ領域に確保する方法がある。
+
+__triangle.h__
+```cpp
+#ifndef __triangle__
+#define __triangle__
+
+class Triangle
+{
+private:	// (2).
+    float base; // 底辺.
+    float height;   // 高さ.
+    
+public:	// (2).
+    // コンストラクタ.
+    Triangle( float i_fBase, float i_fHeight );
+    
+    // (3) baseのアクセサ.
+    float getBase() const { return base; }
+    void setBase( float i_fBase ) { base = i_fBase; }
+    
+    // (3) heightのアクセサ.
+    float getHeight() const { return height; }
+    void setHeight( float i_fHeight ) { height = i_fHeight; }
+    
+    // 面積を取得.
+    float getArea() const;
+};	// (1).
+
+#endif /* defined(__triangle__) */
+```
+
+__triangle.cpp__
+```cpp
+#include "triangle.h"
+
+// (4).
+Triangle::Triangle( float i_fBase, float i_fHeight )
+    : base( i_fBase )
+    , height( i_fHeight )
+{
+}
+
+float Triangle::getArea() const
+{
+    return getBase() * getHeight() * 0.5f;
+}
+```
+
+__main.cpp__
+```cpp
+#include <iostream>
+#include "triangle.h"
+using namespace std;
+
+int main( int argc, const char * argv[] )
+{
+	// (5) スタック領域に確保.
+    Triangle t1( 10.0f, 20.0f );
+    cout << "底辺:" << t1.getBase() << ", 高さ:" << t1.getHeight() << ", 面積:" << t1.getArea() << endl;
+    
+    // (5) ヒープ領域に確保.
+    Triangle* t2 = new Triangle( 10.0f, 20.0f );
+    cout << "底辺:" << t2->getBase() << ", 高さ:" << t2->getHeight() << ", 面積:" << t2->getArea() << endl;
+    delete t2;
+    
+    return 0;
+}
+```
+
+---
+
+### Java
+1. アクセス修飾子はそれぞれの変数、メソッドに個別で指定する。
+2. main関数のアクセス修飾子は必ずpublicでなければならない。
+3. アクセサは自動生成されないので、他のインスタンスメソッドと同様に宣言する必要がある。  
+   ただし、Eclipseには自動生成してくれる機能が備わっているので、それを使用した方がラク。
+
+__Triangle.java__
+```java
+public class Triangle
+{
+	private float base;	// 底辺.
+	private float height;	// 高さ.
+	
+	// コンストラクタ.
+	public Triangle( float base, float height )
+	{
+		setBase( base );
+		setHeight( height );
+	}
+	
+	// (3) baseのアクセサ.
+	public float getBase() { return base; }
+	public void setBase( float base ) { this.base = base; }
+	
+	// (3) heightのアクセサ.
+	public float getHeight() { return height; }
+	public void setHeight( float height ) { this.height = height; }
+	
+	// 面積を取得.
+	public float getArea() { return getBase() * getHeight() * 0.5f; }
+}
+```
+
+__Main.java__
+```java
+public class Main
+{
+	// (2).
+	public static void main( String[] args )
+	{
+		Triangle t = new Triangle( 10.0f, 20.0f );
+		System.out.println( "底辺:" + t.getBase() + ", 高さ:" + t.getHeight() + ", 面積:" + t.getArea() );
+	}
+}
+```
+
+---
+
+### C# #
+1. アクセス修飾子はそれぞれの変数、メソッドに個別で指定する。
+2. プロパティにより、アクセサを自動生成できる。
+
+__Triangle.cs__
+```csharp
+class Triangle
+{
+	// (2) プロパティ.
+	public float Base { set; get; }	// 底辺.
+	public float Height { set; get; }	// 高さ.
+
+	// コンストラクタ.
+	public Triangle( float i_fBase, float i_fHeight )
+	{
+		Base = i_fBase;
+		Height = i_fHeight;
+	}
+
+	// 面積を取得.
+	public float GetArea() { return Base * Height * 0.5f; }
+}
+```
+
+__Program.cs__
+```csharp
+using System;
+
+class Program
+{
+	static void Main( string[] args )
+	{
+		var t = new Triangle( 10.0f, 20.0f );
+		Console.WriteLine( "底辺:" + t.Base + ", 高さ:" + t.Height + ", 面積:" + t.GetArea() );
+	}
+}
+```
+
+---
+
+### Objective-C
+1. プロパティにより、アクセサを自動生成できる。  
+   クラス内では、変数名の前にアンダースコアをつけることでアクセス可能(1')。  
+   クラス外では、そのままの変数名でアクセス可能だが ->演算子 ではなく .演算子 を使用する必要がある(1'')。
+2. アクセス修飾子は範囲毎に設定する。
+
+__triangle.h__
+```objectivec
+#ifndef __triangle__
+#define __triangle__
+
+#import <Foundation/Foundation.h>
+
+@interface Triangle : NSObject
+
+// (1) プロパティ.
+@property float base;    // 底辺.
+@property float height;  // 高さ.
+
+// イニシャライザ.
+-(id) initWithBase:(float)i_fBase
+            Height:(float)i_fHeight;
+
+// 面積を取得.
+-(float) getArea;
+
+@end
+
+#endif /* defined(__triangle__) */
+```
+__triangle.m__
+```objectivec
+#import "triangle.h"
+
+@implementation Triangle
+
+-(id) initWithBase:(float)i_fBase
+            Height:(float)i_fHeight
+{
+    if( self = [super init] )   // 基底クラスの初期化に成功したとき.
+    {
+        // (1').
+        _base = i_fBase;
+        _height = i_fHeight;
+    }
+
+    return self;
+}
+
+-(float) getArea;
+{
+    return _base * _height * 0.5f;	// (1').
+}
+
+@end
+```
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "triangle.h"
+
+int main( int argc, const char * argv[] )
+{
+    @autoreleasepool
+    {
+        Triangle* t = [[Triangle alloc] initWithBase:10.0f Height:20.0f];
+        NSLog( @"底辺:%.1f, 高さ:%.1f, 面積:%.1f", t.base, t.height, [t getArea] );	// (1'').
+    }
+    return 0;
+}
+```
+
+---
+
+### PHP
+TODO
+
+```php
+$a = 10;
+```
+
+---
+
+### JavaScript
+TODO
+
+```js
+var a = 10;
+```
+
+---
+
+[戻る](../index.html)
+
+---
+
+&copy; 2014 小川優樹 all rights reserved.
+
+	</xmp>
+	<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</body>
+</html>
