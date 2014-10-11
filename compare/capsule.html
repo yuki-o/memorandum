@@ -127,7 +127,7 @@ public class Capsule
 
 	public void check()
 	{
-		// クラス内からアクセス可能.
+		// クラス内からアクセス可.
 		none = 0;	// 指定のない変数.
 		noneFunc();	// 指定のない関数.
 		pri = 0;	// private変数.
@@ -228,7 +228,7 @@ public class Capsule
 
 	public void check()
 	{
-		// クラス内からアクセス可能.
+		// クラス内からアクセス可.
 		none = 0;   // 指定のない変数.
 		noneFunc(); // 指定のない関数.
 		pri = 0;    // private変数.
@@ -291,7 +291,7 @@ __capsule.h__
 ```objectivec
 #import <Foundation/Foundation.h>
 
-@interface capsule : NSObject
+@interface Capsule : NSObject
 {
     int none;
 
@@ -319,7 +319,7 @@ __capsule.h__
 @end
 
 //---------------------------------------
-@interface test : NSObject
+@interface Test : NSObject
 
 -(void) check;
 
@@ -330,7 +330,7 @@ __capsule.m__
 ```objectivec
 #import "capsule.h"
 
-@implementation capsule
+@implementation Capsule
 
 // (2).
 -(void) priFunc{}
@@ -352,11 +352,11 @@ __capsule.m__
 @end
 
 //---------------------------------------
-@implementation test
+@implementation Test
 
 -(void) check
 {
-    capsule* c = [[capsule alloc] init];
+    Capsule* c = [[Capsule alloc] init];
     
     // (2') 同一ファイルからアクセス可.
     [c priFunc];    // private関数.
@@ -374,7 +374,7 @@ int main( int argc, const char * argv[] )
 {
     @autoreleasepool
     {
-        capsule* c = [[capsule alloc] init];
+        Capsule* c = [[Capsule alloc] init];
         
         // 同一フレームワーク内 + クラス外からアクセス不可.
 //      c->none = 0;    // 指定のない変数.
