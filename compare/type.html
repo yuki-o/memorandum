@@ -2,61 +2,107 @@
 <html lang="ja">
 <head>
 	<meta charset="UTF-8">
-	<meta name="keywords" content="型,小川,優樹,C言語,C++,Java,C#,Objective-C,PHP,JavaScript">
+	<meta name="keywords" content="組み込み型,小川,優樹,C言語,C++,Java,C#,Objective-C,PHP,JavaScript">
 	<meta name="author" content="小川優樹">
 	<title>プログラミング備忘録</title>
 </head>
 <body>
 	<xmp theme="cerulean" style="display:none;">
 
-## ~ 型 ~
+## ~ 組み込み型 ~
 
 ### C言語
-```c
-int a = 10;
-```
+* 型のサイズが環境依存。
+
+型 | 詳細 | 一般的なサイズ (最小サイズ) | 負数を扱えるか | フォーマット指定子 | 接尾語 | 備考
+--- | --- | --- | --- | --- | --- | ---
+char | 文字型 | 必ず 1 byte | △ | %c |  |
+signed char | 文字型 | 必ず 1 byte | ○ | %c |  |
+unsigned char | 文字型 | 必ず 1 byte | × | %c |  |
+short | 整数型 | 2 byte (2 byte) | ○ | %hd |  | int型より大きいということはない
+unsigned short | 整数型 | 2 byte (2 byte) | × | %hu | U | int型より大きいということはない
+int | 整数型 | 4 byte (2 byte) | ○ | %d |  | 処理系で最も高速に処理を行えるサイズ
+unsigned int | 整数型 | 4 byte (2 byte) | × | %u | U | 処理系で最も高速に処理を行えるサイズ
+long | 整数型 | 4 byte (4 byte) | ○ | %ld | L | int型より小さいということはない
+unsigned long | 整数型 | 4 byte (4 byte) | × | %lu | LU | int型より小さいということはない
+float | 浮動小数点型 | 4 byte (規定されていない) | ○ | %f | F |
+double | 浮動小数点型 | 8 byte (規定されていない) | ○ | %f |  |
+long double | 浮動小数点型 | 10 byte (規定されていない) | ○ | %lf | L |
 
 ---
 
 ### C++
-```cpp
-int a = 10;
-```
+* C言語の組み込み型に下記を追加したもの。
+
+型 | 詳細 | 一般的なサイズ (最小サイズ) | 負数を扱えるか | フォーマット指定子 | 接尾語 | 備考
+--- | --- | --- | --- | --- | --- | ---
+bool | 論理型 | 1 byte (規定されていない) |  |  |  | true(真), false(偽)
+string | 文字列型 |  |  |  |  | ライブラリで提供
 
 ---
 
 ### Java
-```java
-int a = 10;
-```
+* 型のサイズが環境によって変化しない。
+* 正数のみを扱う型がない。
+
+型 | 詳細 | サイズ | 負数を扱えるか | フォーマット指定子 | 接尾語 | 備考
+--- | --- | --- | --- | --- | --- | ---
+boolean | 論理型 | 1 bit |  | %b |  | true(真), false(偽)
+char | 文字型 | 2 byte |  | %c |  |
+byte | 整数型 | 1 byte | ○ | %d |  |
+short | 整数型 | 2 byte | ○ | %d |  |
+int | 整数型 | 4 byte | ○ | %d |  |
+long | 整数型 | 8 byte | ○ | %d | L |
+float | 浮動小数点型 | 4 byte | ○ | %f | F |
+double | 浮動小数点型 | 8 byte | ○ | %f |  |
+String | 文字列型 |  |  | %s |  | ライブラリで提供
+Object | オブジェクト型 |  |  |  |  | ライブラリで提供
 
 ---
 
 ### C# #
-```csharp
-int a = 10;
-```
+* 型のサイズが環境によって変化しない。
+* デシマル型がある。
+
+型 | 詳細 | サイズ | 負数を扱えるか | フォーマット指定子 | 接尾語 | 備考
+--- | --- | --- | --- | --- | --- | ---
+bool | 論理型 | 1 byte |  |  |  | true(真), false(偽)
+char | 文字型 | 2 byte |  |  |  |
+sbyte | 整数型 | 1 byte | ○ |  |  |
+byte | 整数型 | 1 byte | × |  |  |
+short | 整数型 | 2 byte | ○ |  |  |
+ushort | 整数型 | 2 byte | × |  |  |
+int | 整数型 | 4 byte | ○ |  |  |
+uint | 整数型 | 4 byte | × |  | U |
+long | 整数型 | 8 byte | ○ |  | L |
+ulong | 整数型 | 8 byte | × |  | LU |
+float | 浮動小数点型 | 4 byte | ○ |  | F |
+double | 浮動小数点型 | 8 byte | ○ |  | D |
+decimal | デシマル型 | 16 byte | ○ |  | M |
+string | 文字列型 |  |  |  |  |
+object | オブジェクト型 |  |  |  |  |
 
 ---
 
 ### Objective-C
-```objectivec
-int a = 10;
-```
+* C言語の組み込み型に下記を追加したもの。
+
+型 | 詳細 | 一般的なサイズ (最小サイズ) | 負数を扱えるか | フォーマット指定子 | 接尾語 | 備考
+--- | --- | --- | --- | --- | --- | ---
+BOOL | 論理型 | 1 byte |  |  |  | YES(真), NO(偽)
+NSString | 文字列型 |  |  |  |  | ライブラリで提供
+NSDecimal | デシマル型 |  |  |  |  | ライブラリで提供
+NSObject | オブジェクト型 |  |  |  |  | ライブラリで提供
 
 ---
 
 ### PHP
-```php
-$a = 10;
-```
+TODO
 
 ---
 
 ### JavaScript
-```js
-var a = 10;
-```
+TODO
 
 ---
 
