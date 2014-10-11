@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="カプセル化,アクセス,指定子,修飾子,private,protected,public,internal,小川,優樹,比較,逆引き,C言語,C,C++,Java,C#,Objective-C,ObjectiveC,Objective,PHP,JavaScript">
+	<meta name="author" content="小川優樹">
+	<title>プログラミング備忘録</title>
+</head>
+<body>
+	<xmp theme="cerulean" style="display:none;">
+
+## ~ カプセル化 (アクセス修飾子) ~
+
+### C言語
+* なし
+
+---
+
+### C++
+1. アクセス修飾子は構造体(struct)とクラス(class)内で指定可能。
+2. アクセス修飾子は範囲毎に指定する。
+3. アクセス修飾子を指定しない場合、構造体では public 扱い、クラスでは private 扱いとなる。
+
+修飾子 | アクセスを許可する範囲
+--- | ---
+private: | クラス内
+protected: | クラス内 + 継承先のクラス内
+public: | 全範囲
+
+__capsule.h__
+```cpp
+#ifndef __capsule__
+#define __capsule__
+
+class Capsule
+{
+    int none;
+    void noneFunc(){}
+    
+// (2).
+private:
+    int pri;
+    void priFunc(){}
+    
+// (2).
+protected:
+    int pro;
+    void proFunc(){}
+    
+// (2).
+public:
+    int pub;
+    void pubFunc(){}
+    
+    void check()
+    {
+        // クラス内からアクセス可.
+        none = 0;   // 指定のない変数.
+        noneFunc(); // 指定のない関数.
+        pri = 0;    // private変数.
+        priFunc();  // private関数.
+        pro = 0;    // protected変数.
+        proFunc();  // protected関数.
+        pub = 0;    // public変数.
+        pubFunc();  // public関数.
+    }
+};
+
+#endif /* defined(__capsule__) */
+```
+
+__main.cpp__
+```cpp
+#include <iostream>
+#include "capsule.h"
+using namespace std;
+
+int main( int argc, const char * argv[] )
+{
+    Capsule c;
+    
+    // クラス外からアクセス不可.
+//  c.none = 0;   // 指定のない変数.
+//  c.noneFunc(); // 指定のない関数.
+//  c.pri = 0;    // private変数.
+//  c.priFunc();  // private関数.
+//  c.pro = 0;    // protected変数.
+//  c.proFunc();  // protected関数.
+    
+    // クラス外からアクセス可.
+    c.pub = 0;    // public変数.
+    c.pubFunc();  // public関数.
+    
+    return 0;
+}
+```
+
+---
+
+### Java
+1. アクセス修飾子はそれぞれの変数、メソッドに個別で指定する。
+
+修飾子 | アクセスを許可する範囲
+--- | ---
+private | クラス内
+何も指定しない | 同一パッケージ内
+protected | 同一パッケージ内 + クラス内 + 継承先のクラス内
+public | 全範囲
+
+__Capsule.java__
+```java
+package test1;
+
+public class Capsule
+{
+	// (1).
+	int none;
+	private int pri;
+	protected int pro;
+	public int pub;
+
+	// (1).
+	void noneFunc(){}
+	private void priFunc(){}
+	protected void proFunc(){}
+	public void pubFunc(){}
+
+	public void check()
+	{
+		// クラス内からアクセス可能.
+		none = 0;	// 指定のない変数.
+		noneFunc();	// 指定のない関数.
+		pri = 0;	// private変数.
+		priFunc();	// private関数.
+		pro = 0;	// protected変数.
+		proFunc();	// protected関数.
+		pub = 0;	// public変数.
+		pubFunc();	// public関数.
+	}
+}
+```
+
+__ Check1.java (Capsule.java と同一パッケージ)__
+```java
+package test1;
+
+public class Check1
+{
+	public void check()
+	{
+		Capsule c = new Capsule();
+		
+		// 同一パッケージ内 + クラス外からアクセス不可.
+//      c.pri = 0;	// private変数.
+//      c.priFunc();	// private関数.
+		
+		// 同一パッケージ内からアクセス可.
+		c.none = 0;	// 指定のない変数.
+		c.noneFunc();	// 指定のない関数.
+		c.pro = 0;	// protected変数.
+		c.proFunc();	// protected関数.
+		
+		// 同一パッケージ内 + クラス外からアクセス可.
+		c.pub = 0;	// public変数.
+		c.pubFunc();	// public関数.
+	}
+}
+```
+
+__ Check2.java (Capsule.java と異なるパッケージ)__
+```java
+package test2;
+import test1.Capsule;
+
+public class Check2
+{
+	public void check()
+	{
+		Capsule c = new Capsule();
+		
+		// クラス外からアクセス不可.
+//      c.none = 0;	// 指定のない変数.
+//      c.noneFunc();	// 指定のない関数.
+//      c.pri = 0;	// private変数.
+//      c.priFunc();	// private関数.
+//      c.pro = 0;	// protected変数.
+//      c.proFunc();	// protected関数.
+		
+		// クラス外からアクセス可.
+		c.pub = 0;	// public変数.
+		c.pubFunc();	// public関数.
+	}
+}
+```
+
+---
+
+### C# #
+1. アクセス修飾子はそれぞれの変数、メソッドに個別で指定する。
+2. アクセス修飾子を指定しない場合、private 扱いとなる。
+3. internal については、[ここ](http://www.atmarkit.co.jp/fdotnet/csharp_abc/csharp_abc_022/csharp_abc05.html)の説明が参考になります。
+
+修飾子 | アクセスを許可する範囲
+--- | ---
+private | クラス内
+protected | クラス内 + 継承先のクラス内
+internal | 同一プロジェクト内 (DLL)
+protected internal | 同一プロジェクト内 (DLL)、または継承先のクラス内
+public | 全範囲
+
+__Capsule.cs__
+```csharp
+public class Capsule
+{
+	// (1).
+	int none;
+	private int pri;
+	protected int pro;
+	internal int inter;
+	public int pub;
+
+	// (1).
+	void noneFunc(){}
+	private void priFunc(){}
+	protected void proFunc(){}
+	internal void interFunc(){}
+	public void pubFunc(){}
+
+	public void check()
+	{
+		// クラス内からアクセス可能.
+		none = 0;   // 指定のない変数.
+		noneFunc(); // 指定のない関数.
+		pri = 0;    // private変数.
+		priFunc();  // private関数.
+		pro = 0;    // protected変数.
+		proFunc();  // protected関数.
+		inter = 0;	// internal変数.
+		interFunc();	// internal関数.
+		pub = 0;    // public変数.
+		pubFunc();  // public関数.
+	}
+}
+```
+
+__Program.cs__
+```csharp
+using System;
+
+class Program
+{
+	public static void Main( string[] args )
+	{
+		var c = new Capsule();
+
+		// 同一プロジェクト内 + クラス外からアクセス不可.
+//      c.none = 0;   // 指定のない変数.
+//      c.noneFunc(); // 指定のない関数.
+//      c.pri = 0;    // private変数.
+//      c.priFunc();  // private関数.
+//      c.pro = 0;    // protected変数.
+//      c.proFunc();  // protected関数.
+
+		// 同一プロジェクト内からアクセス可.
+		c.inter = 0;	// internal変数.
+		c.interFunc();	// internal関数.
+
+		// クラス外からアクセス可.
+		c.pub = 0;    // public変数.
+		c.pubFunc();  // public関数.
+	}
+}
+```
+
+---
+
+### Objective-C
+1. アクセス修飾子は範囲毎に指定する。
+2. アクセス修飾子はメソッドには指定できない。  
+   メソッドをヘッダに書けば全範囲からアクセスができ、実装ファイルに書けばそのファイル内のみからアクセスができる (2')。
+3. アクセス修飾子を指定しない場合、@protected 扱いとなる。
+
+修飾子 | アクセスを許可する範囲
+--- | ---
+@private | クラス内
+@protected | クラス内 + 継承先のクラス内
+@package | 同一フレームワーク内
+@public | 全範囲
+
+__capsule.h__
+```objectivec
+#import <Foundation/Foundation.h>
+
+@interface capsule : NSObject
+{
+    int none;
+
+// (1).
+@private
+    int pri;
+
+// (1).
+@protected
+    int pro;
+
+// (1).
+@package
+    int pac;
+
+// (1).
+@public
+    int pub;
+}
+
+// (2).
+-(void) pubFunc;
+-(void) check;
+
+@end
+
+//---------------------------------------
+@interface test : NSObject
+
+-(void) check;
+
+@end
+```
+
+__capsule.m__
+```objectivec
+#import "capsule.h"
+
+@implementation capsule
+
+// (2).
+-(void) priFunc{}
+
+-(void) pubFunc{}
+
+-(void) check
+{
+    // クラス内からアクセス可.
+    none = 0;   // 指定のない変数.
+    pri = 0;    // private変数.
+    pro = 0;    // protected変数.
+    pac = 0;    // package変数.
+    pub = 0;    // public変数.
+    [self priFunc];  // private関数.
+    [self pubFunc];  // public関数.
+}
+
+@end
+
+//---------------------------------------
+@implementation test
+
+-(void) check
+{
+    capsule* c = [[capsule alloc] init];
+    
+    // (2') 同一ファイルからアクセス可.
+    [c priFunc];    // private関数.
+}
+
+@end
+```
+
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "capsule.h"
+
+int main( int argc, const char * argv[] )
+{
+    @autoreleasepool
+    {
+        capsule* c = [[capsule alloc] init];
+        
+        // 同一フレームワーク内 + クラス外からアクセス不可.
+//      c->none = 0;    // 指定のない変数.
+//      c->pri = 0; // private変数.
+//      c->pro = 0; // protected変数.
+//      [c priFunc];    // private関数.
+        
+        // 同一フレームワーク内からアクセス可.
+        c->pac = 0; // package変数.
+        
+        // クラス外からアクセス可.
+        c->pub = 0; // public変数.
+        [c pubFunc];    // public関数.
+    }
+    return 0;
+}
+```
+
+---
+
+### PHP
+TODO
+
+```php
+$a = 10;
+```
+
+---
+
+### JavaScript
+TODO
+
+```js
+var a = 10;
+```
+
+---
+
+[戻る](../index.html)
+
+---
+
+&copy; 2014 小川優樹 all rights reserved.
+
+	</xmp>
+	<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</body>
+</html>
