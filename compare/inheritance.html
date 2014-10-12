@@ -17,15 +17,258 @@
 ---
 
 ### C++
+1. 基底クラスのデストラクタと、オーバーライドしたいメンバ関数に virtual を付ける.  
+   ただし (7) のように、基底クラスのポインタ型変数に派生クラスのインスタンスを代入するといった使い方をしない場合は付ける必要がない。
+2. クラス内のメンバにアクセスする際に、this ポインタを使用してもよい。
+3. 継承修飾子を用いて継承する。  
+   継承修飾子を指定しない場合、構造体では public 扱い、クラスでは private 扱いとなる。  
+   ただし、継承修飾子に関わらず、派生クラスからは基底クラスの protected と public なメンバにアクセスすることができる。
+4. 派生クラスのコンストラクタから、「基底クラス( 引数 )」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
+   ただし、コンストラクタ初期化子 : の部分でしか呼び出せない。
+5. 基底クラスと同じメンバ関数を派生クラスで再定義することで、そのメンバ関数をオーバーライドすることができる。  
+   ただし、メンバ変数はオーバーライドすることができない。
+6. 派生クラスから、「基底クラス::メンバ」という書き方で基底クラスのメンバを呼び出すことができる。
+
+__継承修飾子__
+修飾子 | 詳細
+--- | ---
+private | 基底クラスのメンバを全て private にして引き継ぐ
+protected | 基底クラスでアクセス修飾子が public だったメンバを protected にして引き継ぐ (他はそのまま)
+public | そのまま引き継ぐ
+
+__base_derived.h__
 ```cpp
-int a = 10;
+#ifndef __base_derived__
+#define __base_derived__
+
+#include <iostream>
+using namespace std;
+
+// 基底クラス.
+class Base
+{
+private:
+    int baseValue;
+    
+public:
+    // コンストラクタ.
+    Base( int i_nBaseValue )
+        : baseValue( i_nBaseValue )
+    {
+        cout << "Base::Base" << endl;
+    }
+    
+    // (1) デストラクタ.
+    virtual ~Base() { cout << "Base::~Base" << endl; }
+    
+    // (1) オーバーライドのテスト.
+    virtual void testOverride() { cout << "Base::testOverride" << endl; }
+    
+    // (1)(2) 変数の値を表示.
+    virtual void disp() { cout << "baseValue:" << this->baseValue << endl; }
+};
+
+//---------------------------------------
+// 派生クラス.
+class Derived : public Base	// (3) 継承.
+{
+private:
+    int derivedValue;
+    
+public:
+    // コンストラクタ.
+    Derived( int i_nBaseValue, int i_nDerivedValue )
+        : Base( i_nBaseValue )  // (4) 基底クラスのコンストラクタの呼び出し.
+        , derivedValue( i_nDerivedValue )
+    {
+        cout << "Derived::Derived" << endl;
+    }
+    
+    // デストラクタ.
+    virtual ~Derived() { cout << "Derived::~Derived" << endl; }
+    
+    // (5) オーバーライドのテスト.
+    virtual void testOverride() { cout << "Derived::testOverride" << endl; }
+    
+    // (5) 変数の値を表示.
+    virtual void disp()
+    {
+        Base::disp();   // (6) 基底クラスの disp の呼び出し.
+        cout << "derivedValue:" << derivedValue << endl;
+    }
+};
+
+#endif /* defined(__base_derived__) */
+```
+
+__main.cpp__
+```cpp
+#include <iostream>
+#include "base_derived.h"
+using namespace std;
+
+int main( int argc, const char * argv[] )
+{
+    // Derived のポインタ型変数に、Derived クラスのインスタンスを代入.
+    Derived* d1 = new Derived( 10, 20 );
+    cout << "---(a)---" << endl;
+    d1->testOverride();
+    cout << "---(b)---" << endl;
+    d1->disp();
+    cout << "---(c)---" << endl;
+    delete d1;
+    
+    cout << "\n===\n" << endl;
+    
+    // (7) Base のポインタ型変数に、Derived クラスのインスタンスを代入.
+    Base* d2 = new Derived( 10, 20 );
+    cout << "---(d)---" << endl;
+    d2->testOverride();
+    cout << "---(e)---" << endl;
+    d2->disp();
+    cout << "---(f)---" << endl;
+    delete d2;
+    
+    return 0;
+}
+```
+
+__出力結果__
+```
+Base::Base
+Derived::Derived
+---(a)---
+Derived::testOverride
+---(b)---
+baseValue:10
+derivedValue:20
+---(c)---
+Derived::~Derived
+Base::~Base
+
+===
+
+Base::Base
+Derived::Derived
+---(d)---
+Derived::testOverride
+---(e)---
+baseValue:10
+derivedValue:20
+---(f)---
+Derived::~Derived
+Base::~Base
 ```
 
 ---
 
 ### Java
+1. クラス内のメンバにアクセスする際に、this を使用してもよい。
+2. extends 修飾子を用いて継承する。
+3. 派生クラスのコンストラクタから、「super( 引数 );」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
+   ただし、コンストラクタの1行目でしか呼び出せない。
+4. 基底クラスと同じメンバ関数を派生クラスで再定義することで、そのメンバ関数をオーバーライドすることができる。  
+   @Override は付けなくてもよいが、付けた方がオーバーライドを明示することができるし、ミスしていた場合にコンパイラがエラーを出してくれる。
+5. 派生クラスから、「super.メンバ」という書き方で基底クラスのメンバを呼び出すことができる。
+
+__Base.java__
 ```java
-int a = 10;
+// 基底クラス.
+public class Base
+{
+	private int baseValue;
+	
+	// コンストラクタ.
+	public Base( int i_nBaseValue )
+	{
+		baseValue = i_nBaseValue;
+		System.out.println( "Base::Base" );
+	}
+	
+	// オーバーライドのテスト.
+	public void testOverride() { System.out.println( "Base::testOverride" ); }
+	
+	// (1) 変数の値を表示.
+	public void disp() { System.out.println( "baseValue:" + this.baseValue ); }
+}
+```
+
+__Derived.java__
+```java
+// 派生クラス.
+public class Derived extends Base	// (2) 継承.
+{
+	private int derivedValue;
+	
+	// コンストラクタ.
+	Derived( int i_nBaseValue, int i_nDerivedValue )
+	{
+		super( i_nBaseValue );	// (3) 基底クラスのコンストラクタの呼び出し.
+		derivedValue = i_nDerivedValue;
+		System.out.println( "Derived::Derived" );
+	}
+	
+	// (4) オーバーライドのテスト.
+	@Override
+	public void testOverride() { System.out.println( "Derived::testOverride" ); }
+	
+	// (4) 変数の値を表示.
+	@Override
+	public void disp()
+	{
+		super.disp();	// (5) 基底クラスの disp の呼び出し.
+		System.out.println( "derivedValue:" + derivedValue );
+	}
+}
+```
+
+__Main.java__
+```java
+public class Main {
+	public static void main( String[] args )
+	{
+		// Derived 型変数に、Derived クラスのインスタンスを代入.
+		Derived d1 = new Derived( 10, 20 );
+		System.out.println( "---(a)---" );
+		d1.testOverride();
+		System.out.println( "---(b)---" );
+		d1.disp();
+		System.out.println( "---(c)---" );
+		
+		System.out.println( "\n===\n" );
+		
+		// Base 型変数に、Derived クラスのインスタンスを代入.
+		Base d2 = new Derived( 10, 20 );
+		System.out.println( "---(d)---" );
+		d2.testOverride();
+		System.out.println( "---(e)---" );
+		d2.disp();
+		System.out.println( "---(f)---" );
+	}
+}
+```
+
+__出力結果__
+```
+Base::Base
+Derived::Derived
+---(a)---
+Derived::testOverride
+---(b)---
+baseValue:10
+derivedValue:20
+---(c)---
+
+===
+
+Base::Base
+Derived::Derived
+---(d)---
+Derived::testOverride
+---(e)---
+baseValue:10
+derivedValue:20
+---(f)---
 ```
 
 ---
