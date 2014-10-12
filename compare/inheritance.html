@@ -17,17 +17,18 @@
 ---
 
 ### C++
-1. 基底クラスのデストラクタと、オーバーライドしたいメンバ関数に virtual を付ける.  
-   ただし (7) のように、基底クラスのポインタ型変数に派生クラスのインスタンスを代入するといった使い方をしない場合は付ける必要がない。
+1. 基底クラスのデストラクタと、オーバーライドしたいメンバメソッドに virtual を付ける。  
+   ただし (7) のように、基底クラスのポインタ型変数に派生クラス型のインスタンスを代入するといった使い方をしない場合は付ける必要がない。
 2. クラス内のメンバにアクセスする際に、this ポインタを使用してもよい。
-3. 継承修飾子を用いて継承する。  
+3. 継承修飾子を用いて継承する。継承修飾子については下記の表を参照のこと。  
    継承修飾子を指定しない場合、構造体では public 扱い、クラスでは private 扱いとなる。  
    ただし、継承修飾子に関わらず、派生クラスからは基底クラスの protected と public なメンバにアクセスすることができる。
-4. 派生クラスのコンストラクタから、「基底クラス( 引数 )」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
+4. 派生クラスのコンストラクタから、「基底クラス名( 引数 )」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
    ただし、コンストラクタ初期化子 : の部分でしか呼び出せない。
-5. 基底クラスと同じメンバ関数を派生クラスで再定義することで、そのメンバ関数をオーバーライドすることができる。  
-   ただし、メンバ変数はオーバーライドすることができない。
-6. 派生クラスから、「基底クラス::メンバ」という書き方で基底クラスのメンバを呼び出すことができる。
+5. 基底クラスと同じメンバメソッドを派生クラスで再定義することで、そのメンバメソッドをオーバーライドすることができる。  
+   ただし、メンバ変数はオーバーライドすることができない。  
+   virtual は付けなくてもよいが、オーバーライドした目印として付けている。
+6. 派生クラスから、「基底クラス名::メンバ」という書き方で基底クラスのメンバにアクセスすることができる。
 
 __継承修飾子__
 修飾子 | 詳細
@@ -64,7 +65,7 @@ public:
     // (1) オーバーライドのテスト.
     virtual void testOverride() { cout << "Base::testOverride" << endl; }
     
-    // (1)(2) 変数の値を表示.
+    // (1)(2) メンバ変数の値を表示.
     virtual void disp() { cout << "baseValue:" << this->baseValue << endl; }
 };
 
@@ -90,7 +91,7 @@ public:
     // (5) オーバーライドのテスト.
     virtual void testOverride() { cout << "Derived::testOverride" << endl; }
     
-    // (5) 変数の値を表示.
+    // (5) メンバ変数の値を表示.
     virtual void disp()
     {
         Base::disp();   // (6) 基底クラスの disp の呼び出し.
@@ -109,7 +110,7 @@ using namespace std;
 
 int main( int argc, const char * argv[] )
 {
-    // Derived のポインタ型変数に、Derived クラスのインスタンスを代入.
+    // Derived のポインタ型変数に、Derived 型のインスタンスを代入.
     Derived* d1 = new Derived( 10, 20 );
     cout << "---(a)---" << endl;
     d1->testOverride();
@@ -120,7 +121,7 @@ int main( int argc, const char * argv[] )
     
     cout << "\n===\n" << endl;
     
-    // (7) Base のポインタ型変数に、Derived クラスのインスタンスを代入.
+    // (7) Base のポインタ型変数に、Derived 型のインスタンスを代入.
     Base* d2 = new Derived( 10, 20 );
     cout << "---(d)---" << endl;
     d2->testOverride();
@@ -167,9 +168,10 @@ Base::~Base
 2. extends 修飾子を用いて継承する。
 3. 派生クラスのコンストラクタから、「super( 引数 );」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
    ただし、コンストラクタの1行目でしか呼び出せない。
-4. 基底クラスと同じメンバ関数を派生クラスで再定義することで、そのメンバ関数をオーバーライドすることができる。  
-   @Override は付けなくてもよいが、付けた方がオーバーライドを明示することができるし、ミスしていた場合にコンパイラがエラーを出してくれる。
-5. 派生クラスから、「super.メンバ」という書き方で基底クラスのメンバを呼び出すことができる。
+4. 基底クラスと同じメンバメソッドを派生クラスで再定義することで、そのメンバメソッドをオーバーライドすることができる。  
+   ただし、メンバ変数はオーバーライドすることができない。  
+   @Override は付けなくてもよいが、付けた方がオーバーライドを明示することができるし、オーバーライドに失敗している場合はコンパイルエラーとなる。
+5. 派生クラスから、「super.メンバ」という書き方で基底クラスのメンバにアクセスすることができる。
 
 __Base.java__
 ```java
@@ -188,7 +190,7 @@ public class Base
 	// オーバーライドのテスト.
 	public void testOverride() { System.out.println( "Base::testOverride" ); }
 	
-	// (1) 変数の値を表示.
+	// (1) メンバ変数の値を表示.
 	public void disp() { System.out.println( "baseValue:" + this.baseValue ); }
 }
 ```
@@ -212,7 +214,7 @@ public class Derived extends Base	// (2) 継承.
 	@Override
 	public void testOverride() { System.out.println( "Derived::testOverride" ); }
 	
-	// (4) 変数の値を表示.
+	// (4) メンバ変数の値を表示.
 	@Override
 	public void disp()
 	{
@@ -227,7 +229,7 @@ __Main.java__
 public class Main {
 	public static void main( String[] args )
 	{
-		// Derived 型変数に、Derived クラスのインスタンスを代入.
+		// Derived 型変数に、Derived 型のインスタンスを代入.
 		Derived d1 = new Derived( 10, 20 );
 		System.out.println( "---(a)---" );
 		d1.testOverride();
@@ -237,7 +239,7 @@ public class Main {
 		
 		System.out.println( "\n===\n" );
 		
-		// Base 型変数に、Derived クラスのインスタンスを代入.
+		// Base 型変数に、Derived 型のインスタンスを代入.
 		Base d2 = new Derived( 10, 20 );
 		System.out.println( "---(d)---" );
 		d2.testOverride();
@@ -274,20 +276,268 @@ derivedValue:20
 ---
 
 ### C# #
+1. 基底クラスのオーバーライドしたいメンバメソッドに virtual を付ける。
+2. クラス内のメンバにアクセスする際に、this を使用してもよい。
+3. 派生クラスのコンストラクタから、「: base( 引数 )」という書き方で、基底クラスのコンストラクタを呼び出すことができる。  
+   ただし、サンプルプログラムに示すように { の直前にしか書けない。
+4. 基底クラスと同じメンバメソッドを派生クラスで再定義し、override を付けることで、そのメンバメソッドをオーバーライドすることができる。  
+   ただし、メンバ変数はオーバーライドすることができない。
+5. 派生クラスから、「base.メンバ」という書き方で基底クラスのメンバにアクセスすることができる。
+
+__BaseDerived.cs__
 ```csharp
-int a = 10;
+using System;
+
+// 基底クラス.
+public class Base
+{
+	private int baseValue;
+
+	// コンストラクタ.
+	public Base( int i_nBaseValue )
+	{
+		baseValue = i_nBaseValue;
+		Console.WriteLine( "Base::Base" );
+	}
+
+	// (1) オーバーライドのテスト.
+	public virtual void testOverride() { Console.WriteLine( "Base::testOverride" ); }
+
+	// (1)(2) メンバ変数の値を表示.
+	public virtual void disp() { Console.WriteLine( "baseValue:" + this.baseValue ); }
+}
+
+//---------------------------------------
+// 派生クラス.
+public class Derived : Base	// 継承.
+{
+	private int derivedValue;
+
+	// コンストラクタ.
+	public Derived( int i_nBaseValue, int i_nDerivedValue )
+		: base( i_nBaseValue )	// (3) 基底クラスのコンストラクタの呼び出し.
+	{
+		derivedValue = i_nDerivedValue;
+		Console.WriteLine( "Derived::Derived" );
+	}
+
+	// (4) オーバーライドのテスト.
+	public override void testOverride() { Console.WriteLine( "Derived::testOverride" ); }
+
+	// (4) メンバ変数の値を表示.
+	public override void disp()
+	{
+		base.disp();	// (5) 基底クラスの disp の呼び出し.
+		Console.WriteLine( "derivedValue:" + derivedValue );
+	}
+}
+```
+
+__Program.cs__
+```csharp
+using System;
+
+class Program
+{
+	public static void Main( string[] args )
+	{
+		// Derived 型変数に、Derived 型のインスタンスを代入.
+		Derived d1 = new Derived( 10, 20 );
+		Console.WriteLine( "---(a)---" );
+		d1.testOverride();
+		Console.WriteLine( "---(b)---" );
+		d1.disp();
+		Console.WriteLine( "---(c)---" );
+
+		Console.WriteLine( "\n===\n" );
+
+		// Base 型変数に、Derived 型のインスタンスを代入.
+		Base d2 = new Derived( 10, 20 );
+		Console.WriteLine( "---(d)---" );
+		d2.testOverride();
+		Console.WriteLine( "---(e)---" );
+		d2.disp();
+		Console.WriteLine( "---(f)---" );
+	}
+}
+```
+
+__出力結果__
+```
+Base::Base
+Derived::Derived
+---(a)---
+Derived::testOverride
+---(b)---
+baseValue:10
+derivedValue:20
+---(c)---
+
+===
+
+Base::Base
+Derived::Derived
+---(d)---
+Derived::testOverride
+---(e)---
+baseValue:10
+derivedValue:20
+---(f)---
 ```
 
 ---
 
 ### Objective-C
+1. クラス内のメンバにアクセスする際に、self を使用してもよい。
+2. 基底クラスと同じメンバメソッドを派生クラスで再定義することで、そのメンバメソッドをオーバーライドすることができる。  
+   ただし、メンバ変数はオーバーライドすることができない。
+3. 派生クラスから、「[super メンバメソッド]」という書き方で基底クラスのメンバメソッドにアクセスすることができる。  
+   ただし、super を使用してメンバ変数にアクセスすることができない。
+
+__base_derived.h__
 ```objectivec
-int a = 10;
+#import <Foundation/Foundation.h>
+
+// 基底クラスの宣言.
+@interface Base : NSObject
+{
+@private
+	int baseValue;
+}
+-(id) initWithBaseValue:(int)i_nBaseValue;
+-(void) testOverride;
+-(void) disp;
+@end
+
+//---------------------------------------
+// 基底クラスの実装.
+@implementation Base
+
+// イニシャライザ.
+-(id) initWithBaseValue:(int)i_nBaseValue
+{
+    if( self = [super init] )
+    {
+        baseValue = i_nBaseValue;
+    }
+    
+    NSLog( @"Base::Base" );
+    
+    return self;
+}
+
+// オーバーライドのテスト.
+-(void) testOverride { NSLog( @"Base::testOverride" ); }
+
+// (1) メンバ変数の値を表示.
+-(void) disp { NSLog( @"baseValue:%d", self->baseValue ); }
+
+@end
+
+//---------------------------------------
+// 派生クラスの宣言.
+@interface Derived : Base	// 派生.
+{
+@private
+	int derivedValue;
+}
+-(id) initWithBaseValue:(int)i_nBaseValue
+           DerivedValue:(int)i_nDerivedValue;
+-(void) testOverride;
+-(void) disp;
+
+@end
+
+//---------------------------------------
+// 派生クラスの実装.
+@implementation Derived
+
+// イニシャライザ.
+-(id) initWithBaseValue:(int)i_nBaseValue
+           DerivedValue:(int)i_nDerivedValue
+{
+    if( self = [super initWithBaseValue:i_nBaseValue] )	// (3) 基底クラスのイニシャライザの呼び出し.
+    {
+        derivedValue = i_nDerivedValue;
+    }
+    
+    NSLog( @"Derived::Derived" );
+    
+    return self;
+}
+
+// (2) オーバーライドのテスト.
+-(void) testOverride { NSLog( @"Derived::testOverride" ); }
+
+// (2) メンバ変数の値を表示.
+-(void) disp
+{
+    [super disp];   // (3) 基底クラスの disp の呼び出し.
+    NSLog( @"derivedValue:%d", derivedValue );
+}
+
+@end
+```
+
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "base_derived.h"
+
+int main( int argc, const char * argv[] )
+{
+    @autoreleasepool
+    {
+        // Derived のポインタ型変数に、Derived 型のインスタンスを代入.
+        Derived* d1 = [[Derived alloc] initWithBaseValue:10 DerivedValue:20];
+        NSLog( @"---(a)---" );
+        [d1 testOverride];
+        NSLog( @"---(b)---" );
+        [d1 disp];
+        NSLog( @"---(c)---" );
+        
+        NSLog( @"\n===\n" );
+        
+        // Base のポインタ型変数に、Derived 型のインスタンスを代入.
+        Base* d2 = [[Derived alloc] initWithBaseValue:10 DerivedValue:20];
+        NSLog( @"---(d)---" );
+        [d2 testOverride];
+        NSLog( @"---(e)---" );
+        [d2 disp];
+        NSLog( @"---(f)---" );
+    }
+    return 0;
+}
+```
+
+__出力結果__
+```
+Base::Base
+Derived::Derived
+---(a)---
+Derived::testOverride
+---(b)---
+baseValue:10
+derivedValue:20
+---(c)---
+
+===
+
+Base::Base
+Derived::Derived
+---(d)---
+Derived::testOverride
+---(e)---
+baseValue:10
+derivedValue:20
+---(f)---
 ```
 
 ---
 
 ### PHP
+TODO
+
 ```php
 $a = 10;
 ```
@@ -295,6 +545,8 @@ $a = 10;
 ---
 
 ### JavaScript
+TODO
+
 ```js
 var a = 10;
 ```
