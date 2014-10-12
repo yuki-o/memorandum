@@ -50,6 +50,9 @@ class Base
 {
 private:
     int baseValue;
+
+protected:
+	int proValue;
     
 public:
     // コンストラクタ.
@@ -95,6 +98,7 @@ public:
     virtual void disp()
     {
         Base::disp();   // (6) 基底クラスの disp の呼び出し.
+        Base::proValue = 0;	// (6) 基底クラスの proValue に代入.
         cout << "derivedValue:" << derivedValue << endl;
     }
 };
@@ -179,6 +183,7 @@ __Base.java__
 public class Base
 {
 	private int baseValue;
+	protected int proValue;
 	
 	// コンストラクタ.
 	public Base( int i_nBaseValue )
@@ -219,6 +224,7 @@ public class Derived extends Base	// (2) 継承.
 	public void disp()
 	{
 		super.disp();	// (5) 基底クラスの disp の呼び出し.
+		super.proValue = 0;	// (5) 基底クラスの proValue に代入.
 		System.out.println( "derivedValue:" + derivedValue );
 	}
 }
@@ -292,6 +298,7 @@ using System;
 public class Base
 {
 	private int baseValue;
+	protected int proValue;
 
 	// コンストラクタ.
 	public Base( int i_nBaseValue )
@@ -328,6 +335,7 @@ public class Derived : Base	// 継承.
 	public override void disp()
 	{
 		base.disp();	// (5) 基底クラスの disp の呼び出し.
+		base.proValue = 0;	// (5) 基底クラスの proValue に代入.
 		Console.WriteLine( "derivedValue:" + derivedValue );
 	}
 }
