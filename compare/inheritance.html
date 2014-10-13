@@ -37,102 +37,115 @@ private | 基底クラスのメンバを全て private にして引き継ぐ
 protected | 基底クラスでアクセス修飾子が public だったメンバを protected にして引き継ぐ (他はそのまま)
 public | そのまま引き継ぐ
 
-__base_derived.h__
+__aircrapt.h__
 ```cpp
-#ifndef __base_derived__
-#define __base_derived__
+#ifndef __aircrapt__
+#define __aircrapt__
 
 #include <iostream>
 using namespace std;
 
-// 基底クラス.
-class Base
+// 基底クラス (航空機クラス).
+class Aircrapt
 {
 private:
-    int baseValue;
-
-protected:
-	int proValue;
+    int size;   // 大きさ.
     
+protected:
+    int speed;  // 速度.
+
 public:
     // コンストラクタ.
-    Base( int i_nBaseValue )
-        : baseValue( i_nBaseValue )
+    Aircrapt( int i_nSize, int i_nSpeed )
+        : size  ( i_nSize )
+        , speed ( i_nSpeed )
     {
-        cout << "Base::Base" << endl;
+        cout << "Aircrapt::Aircrapt" << endl;
     }
     
     // (1) デストラクタ.
-    virtual ~Base() { cout << "Base::~Base" << endl; }
+    virtual ~Aircrapt() { cout << "Aircrapt::~Aircrapt" << endl; }
     
-    // (1) オーバーライドのテスト.
-    virtual void testOverride() { cout << "Base::testOverride" << endl; }
+    // (1) 飛ぶ.
+    virtual void fly() const { cout << "Aircrapt::fly" << endl; }
     
     // (1)(2) メンバ変数の値を表示.
-    virtual void disp() { cout << "baseValue:" << this->baseValue << endl; }
+    virtual void disp() const { cout << "size:" << this->size << endl; }
 };
 
-//---------------------------------------
-// 派生クラス.
-class Derived : public Base	// (3) 継承.
+#endif /* defined(__aircrapt__) */
+```
+
+__fighter.h__
+```cpp
+#ifndef __fighter__
+#define __fighter__
+
+#include <iostream>
+#include "aircrapt.h"
+using namespace std;
+
+// 派生クラス (戦闘機クラス).
+class Fighter : public Aircrapt // (3) 継承.
 {
 private:
-    int derivedValue;
+    int bulletNum;  // 弾の数.
     
 public:
     // コンストラクタ.
-    Derived( int i_nBaseValue, int i_nDerivedValue )
-        : Base( i_nBaseValue )  // (4) 基底クラスのコンストラクタの呼び出し.
-        , derivedValue( i_nDerivedValue )
+    Fighter( int i_nSize, int i_nSpeed, int i_nBulletNum )
+        : Aircrapt  ( i_nSize, i_nSpeed ) // (4) 基底クラスのコンストラクタの呼び出し.
+        , bulletNum ( i_nBulletNum )
     {
-        cout << "Derived::Derived" << endl;
+        cout << "Fighter::Fighter" << endl;
     }
     
     // デストラクタ.
-    virtual ~Derived() { cout << "Derived::~Derived" << endl; }
+    virtual ~Fighter() { cout << "Fighter::~Fighter" << endl; }
     
-    // (5) オーバーライドのテスト.
-    virtual void testOverride() { cout << "Derived::testOverride" << endl; }
+    // (5) 飛ぶ.
+    virtual void fly() const { cout << "Fighter::fly" << endl; }
     
     // (5) メンバ変数の値を表示.
-    virtual void disp()
+    virtual void disp() const
     {
-        Base::disp();   // (6) 基底クラスの disp の呼び出し.
-        Base::proValue = 0;	// (6) 基底クラスの proValue に代入.
-        cout << "derivedValue:" << derivedValue << endl;
+        Aircrapt::disp();   // (6) 基底クラスの disp の呼び出し.
+        cout << "speed:" << Aircrapt::speed << endl;    // (6) 基底クラスの speed にアクセス.
+        cout << "bulletNum:" << bulletNum << endl;
     }
 };
 
-#endif /* defined(__base_derived__) */
+#endif /* defined(__fighter__) */
 ```
 
 __main.cpp__
 ```cpp
 #include <iostream>
-#include "base_derived.h"
+#include "aircrapt.h"
+#include "fighter.h"
 using namespace std;
 
 int main( int argc, const char * argv[] )
 {
-    // Derived のポインタ型変数に、Derived 型のインスタンスを代入.
-    Derived* d1 = new Derived( 10, 20 );
+    // Fighter のポインタ型変数に、Fighter 型のインスタンスを代入.
+    Fighter* f1 = new Fighter( 10, 20, 30 );
     cout << "---(a)---" << endl;
-    d1->testOverride();
+    f1->fly();
     cout << "---(b)---" << endl;
-    d1->disp();
+    f1->disp();
     cout << "---(c)---" << endl;
-    delete d1;
+    delete f1;
     
     cout << "\n===\n" << endl;
     
-    // (7) Base のポインタ型変数に、Derived 型のインスタンスを代入.
-    Base* d2 = new Derived( 10, 20 );
+    // (7) Aircrapt のポインタ型変数に、Fighter 型のインスタンスを代入.
+    Aircrapt* f2 = new Fighter( 10, 20, 30 );
     cout << "---(d)---" << endl;
-    d2->testOverride();
+    f2->fly();
     cout << "---(e)---" << endl;
-    d2->disp();
+    f2->disp();
     cout << "---(f)---" << endl;
-    delete d2;
+    delete f2;
     
     return 0;
 }
@@ -140,29 +153,31 @@ int main( int argc, const char * argv[] )
 
 __出力結果__
 ```
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(a)---
-Derived::testOverride
+Fighter::fly
 ---(b)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(c)---
-Derived::~Derived
-Base::~Base
+Fighter::~Fighter
+Aircrapt::~Aircrapt
 
 ===
 
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(d)---
-Derived::testOverride
+Fighter::fly
 ---(e)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(f)---
-Derived::~Derived
-Base::~Base
+Fighter::~Fighter
+Aircrapt::~Aircrapt
 ```
 
 ---
@@ -177,105 +192,109 @@ Base::~Base
    @Override は付けなくてもよいが、付けた方がオーバーライドを明示することができるし、オーバーライドに失敗している場合はコンパイルエラーとなる。
 5. 派生クラスから、「super.メンバ」という書き方で基底クラスのメンバにアクセスすることができる。
 
-__Base.java__
+__Aircrapt.java__
 ```java
-// 基底クラス.
-public class Base
+// 基底クラス (航空機クラス).
+public class Aircrapt
 {
-	private int baseValue;
-	protected int proValue;
-	
-	// コンストラクタ.
-	public Base( int i_nBaseValue )
-	{
-		baseValue = i_nBaseValue;
-		System.out.println( "Base::Base" );
-	}
-	
-	// オーバーライドのテスト.
-	public void testOverride() { System.out.println( "Base::testOverride" ); }
-	
-	// (1) メンバ変数の値を表示.
-	public void disp() { System.out.println( "baseValue:" + this.baseValue ); }
+    private int size;	// 大きさ.
+    protected int speed;	// 速度.
+
+    // コンストラクタ.
+    public Aircrapt( int i_nSize, int i_nSpeed )
+    {
+    	size = i_nSize;
+    	speed = i_nSpeed;
+        System.out.println( "Aircrapt::Aircrapt" );
+    }
+
+    // 飛ぶ.
+    public void fly() { System.out.println( "Aircrapt::fly" ); }
+
+    // (1) メンバ変数の値を表示.
+    public void disp() { System.out.println( "size:" + this.size ); }
 }
 ```
 
-__Derived.java__
+__Fighter.java__
 ```java
-// 派生クラス.
-public class Derived extends Base	// (2) 継承.
+// 派生クラス (戦闘機クラス).
+public class Fighter extends Aircrapt    // (2) 継承.
 {
-	private int derivedValue;
-	
-	// コンストラクタ.
-	Derived( int i_nBaseValue, int i_nDerivedValue )
-	{
-		super( i_nBaseValue );	// (3) 基底クラスのコンストラクタの呼び出し.
-		derivedValue = i_nDerivedValue;
-		System.out.println( "Derived::Derived" );
-	}
-	
-	// (4) オーバーライドのテスト.
-	@Override
-	public void testOverride() { System.out.println( "Derived::testOverride" ); }
-	
-	// (4) メンバ変数の値を表示.
-	@Override
-	public void disp()
-	{
-		super.disp();	// (5) 基底クラスの disp の呼び出し.
-		super.proValue = 0;	// (5) 基底クラスの proValue に代入.
-		System.out.println( "derivedValue:" + derivedValue );
-	}
+    private int bulletNum;	// 弾の数.
+
+    // コンストラクタ.
+    public Fighter( int i_nSize, int i_nSpeed, int i_nBulletNum )
+    {
+        super( i_nSize, i_nSpeed );    // (3) 基底クラスのコンストラクタの呼び出し.
+        bulletNum = i_nBulletNum;
+        System.out.println( "Fighter::Fighter" );
+    }
+
+    // (4) 飛ぶ.
+    @Override
+    public void fly() { System.out.println( "Fighter::fly" ); }
+
+    // (4) メンバ変数の値を表示.
+    @Override
+    public void disp()
+    {
+        super.disp();    // (5) 基底クラスの disp の呼び出し.
+        System.out.println( "speed:" + super.speed );    // (5) 基底クラスの speed にアクセス.
+        System.out.println( "bulletNum:" + bulletNum );
+    }
 }
 ```
 
 __Main.java__
 ```java
-public class Main {
-	public static void main( String[] args )
-	{
-		// Derived 型変数に、Derived 型のインスタンスを代入.
-		Derived d1 = new Derived( 10, 20 );
-		System.out.println( "---(a)---" );
-		d1.testOverride();
-		System.out.println( "---(b)---" );
-		d1.disp();
-		System.out.println( "---(c)---" );
-		
-		System.out.println( "\n===\n" );
-		
-		// Base 型変数に、Derived 型のインスタンスを代入.
-		Base d2 = new Derived( 10, 20 );
-		System.out.println( "---(d)---" );
-		d2.testOverride();
-		System.out.println( "---(e)---" );
-		d2.disp();
-		System.out.println( "---(f)---" );
-	}
+public class Main 
+{
+    public static void main( String[] args )
+    {
+        // Fighter 型変数に、Fighter 型のインスタンスを代入.
+        Fighter f1 = new Fighter( 10, 20, 30 );
+        System.out.println( "---(a)---" );
+        f1.fly();
+        System.out.println( "---(b)---" );
+        f1.disp();
+        System.out.println( "---(c)---" );
+
+        System.out.println( "\n===\n" );
+
+        // Aircrapt 型変数に、Fighter 型のインスタンスを代入.
+        Aircrapt f2 = new Fighter( 10, 20, 30 );
+        System.out.println( "---(d)---" );
+        f2.fly();
+        System.out.println( "---(e)---" );
+        f2.disp();
+        System.out.println( "---(f)---" );
+    }
 }
 ```
 
 __出力結果__
 ```
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(a)---
-Derived::testOverride
+Fighter::fly
 ---(b)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(c)---
 
 ===
 
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(d)---
-Derived::testOverride
+Fighter::fly
 ---(e)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(f)---
 ```
 
@@ -290,53 +309,58 @@ derivedValue:20
    ただし、メンバ変数はオーバーライドすることができない。
 5. 派生クラスから、「base.メンバ」という書き方で基底クラスのメンバにアクセスすることができる。
 
-__BaseDerived.cs__
+__Aircrapt.cs__
 ```csharp
 using System;
 
-// 基底クラス.
-public class Base
+// 基底クラス (航空機クラス).
+public class Aircrapt
 {
-	private int baseValue;
-	protected int proValue;
+	private int size;	// 大きさ.
+	protected int speed;	// 速度.
 
 	// コンストラクタ.
-	public Base( int i_nBaseValue )
+	public Aircrapt( int i_nSize, int i_nSpeed )
 	{
-		baseValue = i_nBaseValue;
-		Console.WriteLine( "Base::Base" );
+		size = i_nSize;
+		speed = i_nSpeed;
+		Console.WriteLine( "Aircrapt::Aircrapt" );
 	}
 
-	// (1) オーバーライドのテスト.
-	public virtual void testOverride() { Console.WriteLine( "Base::testOverride" ); }
+	// (1) 飛ぶ.
+	public virtual void fly() { Console.WriteLine( "Aircrapt::fly" ); }
 
 	// (1)(2) メンバ変数の値を表示.
-	public virtual void disp() { Console.WriteLine( "baseValue:" + this.baseValue ); }
+	public virtual void disp() { Console.WriteLine( "size:" + this.size ); }
 }
+```
 
-//---------------------------------------
-// 派生クラス.
-public class Derived : Base	// 継承.
+__Fighter.cs__
+```csharp
+using System;
+
+// 派生クラス (戦闘機クラス).
+public class Fighter : Aircrapt    // 継承.
 {
-	private int derivedValue;
+	private int bulletNum;	// 弾の数.
 
 	// コンストラクタ.
-	public Derived( int i_nBaseValue, int i_nDerivedValue )
-		: base( i_nBaseValue )	// (3) 基底クラスのコンストラクタの呼び出し.
+	public Fighter( int i_nSize, int i_nSpeed, int i_nBulletNum )
+		: base( i_nSize, i_nSpeed )    // (3) 基底クラスのコンストラクタの呼び出し.
 	{
-		derivedValue = i_nDerivedValue;
-		Console.WriteLine( "Derived::Derived" );
+		bulletNum = i_nBulletNum;
+		Console.WriteLine( "Fighter::Fighter" );
 	}
 
-	// (4) オーバーライドのテスト.
-	public override void testOverride() { Console.WriteLine( "Derived::testOverride" ); }
+	// (4) 飛ぶ.
+	public override void fly() { Console.WriteLine( "Fighter::fly" ); }
 
 	// (4) メンバ変数の値を表示.
 	public override void disp()
 	{
-		base.disp();	// (5) 基底クラスの disp の呼び出し.
-		base.proValue = 0;	// (5) 基底クラスの proValue に代入.
-		Console.WriteLine( "derivedValue:" + derivedValue );
+		base.disp();    // (5) 基底クラスの disp の呼び出し.
+		Console.WriteLine( "speed:" + base.speed );	// (5) 基底クラスの speed にアクセス.
+		Console.WriteLine( "bulletNum:" + bulletNum );
 	}
 }
 ```
@@ -349,22 +373,22 @@ class Program
 {
 	public static void Main( string[] args )
 	{
-		// Derived 型変数に、Derived 型のインスタンスを代入.
-		Derived d1 = new Derived( 10, 20 );
+		// Fighter 型変数に、Fighter 型のインスタンスを代入.
+		Fighter f1 = new Fighter( 10, 20, 30 );
 		Console.WriteLine( "---(a)---" );
-		d1.testOverride();
+		f1.fly();
 		Console.WriteLine( "---(b)---" );
-		d1.disp();
+		f1.disp();
 		Console.WriteLine( "---(c)---" );
 
 		Console.WriteLine( "\n===\n" );
 
-		// Base 型変数に、Derived 型のインスタンスを代入.
-		Base d2 = new Derived( 10, 20 );
+		// Aircrapt 型変数に、Fighter 型のインスタンスを代入.
+		Aircrapt f2 = new Fighter( 10, 20, 30 );
 		Console.WriteLine( "---(d)---" );
-		d2.testOverride();
+		f2.fly();
 		Console.WriteLine( "---(e)---" );
-		d2.disp();
+		f2.disp();
 		Console.WriteLine( "---(f)---" );
 	}
 }
@@ -372,24 +396,26 @@ class Program
 
 __出力結果__
 ```
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(a)---
-Derived::testOverride
+Fighter::fly
 ---(b)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(c)---
 
 ===
 
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(d)---
-Derived::testOverride
+Fighter::fly
 ---(e)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(f)---
 ```
 
@@ -402,86 +428,101 @@ derivedValue:20
 3. 派生クラスから、「[super メンバメソッド]」という書き方で基底クラスのメンバメソッドにアクセスすることができる。  
    ただし、super を使用してメンバ変数にアクセスすることができない。
 
-__base_derived.h__
+__aircrapt.h__
 ```objectivec
 #import <Foundation/Foundation.h>
 
-// 基底クラスの宣言.
-@interface Base : NSObject
+// 基底クラス (航空機クラス) の宣言.
+@interface Aircrapt : NSObject
 {
 @private
-	int baseValue;
+    int size;   // 大きさ.
+    
+@protected
+    int speed;  // 速度.
 }
--(id) initWithBaseValue:(int)i_nBaseValue;
--(void) testOverride;
+-(id) initWithSize:(int)i_nSize
+             speed:(int)i_nSpeed;
+-(void) fly;
 -(void) disp;
+
 @end
 
 //---------------------------------------
-// 基底クラスの実装.
-@implementation Base
+// 基底クラス (航空機クラス) の実装.
+@implementation Aircrapt
 
 // イニシャライザ.
--(id) initWithBaseValue:(int)i_nBaseValue
+-(id) initWithSize:(int)i_nSize
+             speed:(int)i_nSpeed
 {
     if( self = [super init] )
     {
-        baseValue = i_nBaseValue;
+        size = i_nSize;
+        speed = i_nSpeed;
     }
     
-    NSLog( @"Base::Base" );
+    NSLog( @"Aircrapt::Aircrapt" );
     
     return self;
 }
 
-// オーバーライドのテスト.
--(void) testOverride { NSLog( @"Base::testOverride" ); }
+// 飛ぶ.
+-(void) fly { NSLog( @"Aircrapt::fly" ); }
 
 // (1) メンバ変数の値を表示.
--(void) disp { NSLog( @"baseValue:%d", self->baseValue ); }
+-(void) disp { NSLog( @"size:%d", self->size ); }
 
 @end
+```
 
-//---------------------------------------
-// 派生クラスの宣言.
-@interface Derived : Base	// 派生.
+__fighter.h__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "aircrapt.h"
+
+// 派生クラス (戦闘機クラス) の宣言.
+@interface Fighter : Aircrapt    // 継承.
 {
 @private
-	int derivedValue;
+    int bulletNum;  // 弾の数.
 }
--(id) initWithBaseValue:(int)i_nBaseValue
-           DerivedValue:(int)i_nDerivedValue;
--(void) testOverride;
+-(id) initWithSize:(int)i_nSize
+             speed:(int)i_nSpeed
+         bulletNum:(int)i_nBulletNum;
+-(void) fly;
 -(void) disp;
 
 @end
 
 //---------------------------------------
-// 派生クラスの実装.
-@implementation Derived
+// 派生クラス (戦闘機クラス) の実装.
+@implementation Fighter
 
 // イニシャライザ.
--(id) initWithBaseValue:(int)i_nBaseValue
-           DerivedValue:(int)i_nDerivedValue
+-(id) initWithSize:(int)i_nSize
+             speed:(int)i_nSpeed
+         bulletNum:(int)i_nBulletNum
 {
-    if( self = [super initWithBaseValue:i_nBaseValue] )	// (3) 基底クラスのイニシャライザの呼び出し.
+    if( self = [super initWithSize:i_nSize speed:i_nSpeed] )    // (3) 基底クラスのイニシャライザの呼び出し.
     {
-        derivedValue = i_nDerivedValue;
+        bulletNum = i_nBulletNum;
     }
     
-    NSLog( @"Derived::Derived" );
+    NSLog( @"Fighter::Fighter" );
     
     return self;
 }
 
-// (2) オーバーライドのテスト.
--(void) testOverride { NSLog( @"Derived::testOverride" ); }
+// (2) 飛ぶ.
+-(void) fly { NSLog( @"Fighter::fly" ); }
 
 // (2) メンバ変数の値を表示.
 -(void) disp
 {
     [super disp];   // (3) 基底クラスの disp の呼び出し.
-    NSLog( @"derivedValue:%d", derivedValue );
+    NSLog( @"speed:%d", speed );
+    NSLog( @"bulletNum:%d", bulletNum );
 }
 
 @end
@@ -490,28 +531,29 @@ __base_derived.h__
 __main.m__
 ```objectivec
 #import <Foundation/Foundation.h>
-#import "base_derived.h"
+#import "aircrapt.h"
+#import "fighter.h"
 
 int main( int argc, const char * argv[] )
 {
     @autoreleasepool
     {
-        // Derived のポインタ型変数に、Derived 型のインスタンスを代入.
-        Derived* d1 = [[Derived alloc] initWithBaseValue:10 DerivedValue:20];
+        // Fighter のポインタ型変数に、Fighter 型のインスタンスを代入.
+        Fighter* f1 = [[Fighter alloc] initWithSize:10 speed:20 bulletNum:30];
         NSLog( @"---(a)---" );
-        [d1 testOverride];
+        [f1 fly];
         NSLog( @"---(b)---" );
-        [d1 disp];
+        [f1 disp];
         NSLog( @"---(c)---" );
         
         NSLog( @"\n===\n" );
         
-        // Base のポインタ型変数に、Derived 型のインスタンスを代入.
-        Base* d2 = [[Derived alloc] initWithBaseValue:10 DerivedValue:20];
+        // Aircrapt のポインタ型変数に、Fighter 型のインスタンスを代入.
+        Aircrapt* f2 = [[Fighter alloc] initWithSize:10 speed:20 bulletNum:30];
         NSLog( @"---(d)---" );
-        [d2 testOverride];
+        [f2 fly];
         NSLog( @"---(e)---" );
-        [d2 disp];
+        [f2 disp];
         NSLog( @"---(f)---" );
     }
     return 0;
@@ -520,24 +562,26 @@ int main( int argc, const char * argv[] )
 
 __出力結果__
 ```
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(a)---
-Derived::testOverride
+Fighter::fly
 ---(b)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(c)---
 
 ===
 
-Base::Base
-Derived::Derived
+Aircrapt::Aircrapt
+Fighter::Fighter
 ---(d)---
-Derived::testOverride
+Fighter::fly
 ---(e)---
-baseValue:10
-derivedValue:20
+size:10
+speed:20
+bulletNum:30
 ---(f)---
 ```
 
