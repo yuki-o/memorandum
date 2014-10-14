@@ -45,7 +45,7 @@ __aircrapt.h__
 #include <iostream>
 using namespace std;
 
-// 基底クラス (航空機クラス).
+// 基底クラス (航空機).
 class Aircrapt
 {
 private:
@@ -85,7 +85,7 @@ __fighter.h__
 #include "aircrapt.h"
 using namespace std;
 
-// 派生クラス (戦闘機クラス).
+// 派生クラス (戦闘機).
 class Fighter : public Aircrapt // (3) 継承.
 {
 private:
@@ -194,8 +194,8 @@ Aircrapt::~Aircrapt
 
 __Aircrapt.java__
 ```java
-// 基底クラス (航空機クラス).
-public class Aircrapt
+// 基底クラス (航空機).
+class Aircrapt
 {
     private int size;	// 大きさ.
     protected int speed;	// 速度.
@@ -218,8 +218,8 @@ public class Aircrapt
 
 __Fighter.java__
 ```java
-// 派生クラス (戦闘機クラス).
-public class Fighter extends Aircrapt    // (2) 継承.
+// 派生クラス (戦闘機).
+class Fighter extends Aircrapt    // (2) 継承.
 {
     private int bulletNum;	// 弾の数.
 
@@ -248,7 +248,7 @@ public class Fighter extends Aircrapt    // (2) 継承.
 
 __Main.java__
 ```java
-public class Main 
+class Main 
 {
     public static void main( String[] args )
     {
@@ -313,8 +313,8 @@ __Aircrapt.cs__
 ```csharp
 using System;
 
-// 基底クラス (航空機クラス).
-public class Aircrapt
+// 基底クラス (航空機).
+class Aircrapt
 {
 	private int size;	// 大きさ.
 	protected int speed;	// 速度.
@@ -339,8 +339,8 @@ __Fighter.cs__
 ```csharp
 using System;
 
-// 派生クラス (戦闘機クラス).
-public class Fighter : Aircrapt    // 継承.
+// 派生クラス (戦闘機).
+class Fighter : Aircrapt    // 継承.
 {
 	private int bulletNum;	// 弾の数.
 
@@ -432,7 +432,7 @@ __aircrapt.h__
 ```objectivec
 #import <Foundation/Foundation.h>
 
-// 基底クラス (航空機クラス) の宣言.
+// 基底クラス (航空機) の宣言.
 @interface Aircrapt : NSObject
 {
 @private
@@ -446,10 +446,10 @@ __aircrapt.h__
 -(void) fly;
 -(void) disp;
 
-@end
+@end /* @interface Aircrapt */
 
 //---------------------------------------
-// 基底クラス (航空機クラス) の実装.
+// 基底クラス (航空機) の実装.
 @implementation Aircrapt
 
 // イニシャライザ.
@@ -473,7 +473,7 @@ __aircrapt.h__
 // (1) メンバ変数の値を表示.
 -(void) disp { NSLog( @"size:%d", self->size ); }
 
-@end
+@end /* @implementation Aircrapt */
 ```
 
 __fighter.h__
@@ -481,7 +481,7 @@ __fighter.h__
 #import <Foundation/Foundation.h>
 #import "aircrapt.h"
 
-// 派生クラス (戦闘機クラス) の宣言.
+// 派生クラス (戦闘機) の宣言.
 @interface Fighter : Aircrapt    // 継承.
 {
 @private
@@ -493,10 +493,10 @@ __fighter.h__
 -(void) fly;
 -(void) disp;
 
-@end
+@end /* @interface Fighter */
 
 //---------------------------------------
-// 派生クラス (戦闘機クラス) の実装.
+// 派生クラス (戦闘機) の実装.
 @implementation Fighter
 
 // イニシャライザ.
@@ -525,7 +525,7 @@ __fighter.h__
     NSLog( @"bulletNum:%d", bulletNum );
 }
 
-@end
+@end /* @implementation Fighter */
 ```
 
 __main.m__
@@ -591,7 +591,7 @@ bulletNum:30
 TODO
 
 ```php
-$a = 10;
+
 ```
 
 ---
@@ -600,7 +600,7 @@ $a = 10;
 TODO
 
 ```js
-var a = 10;
+
 ```
 
 ---

@@ -17,43 +17,547 @@
 ---
 
 ### C++
+1. すべてのメンバメソッドが純粋仮想関数となっていれば、インターフェースとなる。
+2. 一部のメンバメソッドが純粋仮想関数となっていれば、抽象クラスとなる。
+3. 通常通りの形で、インターフェースと抽象クラスを継承することができる。
+4. 純粋仮想関数の実装は、継承したクラスで行う。
+5. インターフェースと抽象クラスは、インスタンス化することができない.
+
+__creature.h__
 ```cpp
-int a = 10;
+#ifndef __creature__
+#define __creature__
+
+// (1) インターフェース (生物).
+class Creature
+{
+public:
+    // 逃げる (生物によって逃げ方が違う).
+    virtual void runAway() = 0;
+};
+
+#endif /* defined(__creature__) */
+```
+
+__human.h__
+```cpp
+#ifndef __human__
+#define __human__
+
+#include <iostream>
+#include <string>
+#include "creature.h"
+using namespace std;
+
+// 抽象クラス (人間).
+class Human : public Creature	// (3).
+{
+protected:
+    string name;    // 名前.
+    
+public:
+    // コンストラクタ.
+    Human( const char* i_pszName ) : name ( i_pszName ) {}
+    
+    // (4) 逃げる.
+    virtual void runAway() { cout << "走って逃げる" << endl; }
+    
+    // 自己紹介をする.
+    void introduceOnself() { cout << "私の名前は" << name.c_str() << "です" << endl; }
+    
+    // (2) 仕事をする (人によって仕事の内容が違う).
+    virtual void work() = 0;
+};
+
+#endif /* defined(__human__) */
+```
+
+__programmer.h__
+```cpp
+#ifndef __programmer__
+#define __programmer__
+
+#include <iostream>
+#include "human.h"
+using namespace std;
+
+// クラス (プログラマ).
+class Programmer : public Human	// (3).
+{
+public:
+    // コンストラクタ.
+    Programmer( const char* i_pszName ) : Human ( i_pszName ) {}
+    
+    // (4) 仕事をする.
+    virtual void work() { cout << "プログラムを書く" << endl; }
+};
+
+#endif /* defined(__programmer__) */
+```
+
+__main.cpp__
+```cpp
+#include <iostream>
+#include "creature.h"
+#include "human.h"
+#include "programmer.h"
+using namespace std;
+
+int main( int argc, const char * argv[] )
+{
+    // (5) インターフェースと抽象クラスはインスタンス化することができない.
+//  Creature c;
+//  Human h( "ogawa" );
+    
+    // Programmer のポインタ型変数に、Programmer 型のインスタンスを代入.
+    Programmer* p1 = new Programmer( "ogawa" );
+    p1->runAway();
+    p1->introduceOnself();
+    p1->work();
+    delete p1;
+    
+    cout << "===" << endl;
+    
+    // Human のポインタ型変数に、Programmer 型のインスタンスを代入.
+    Human* p2 = new Programmer( "ogawa" );
+    p2->runAway();
+    p2->introduceOnself();
+    p2->work();
+    delete p2;
+    
+    cout << "===" << endl;
+    
+    // Creature のポインタ型変数に、Programmer 型のインスタンスを代入.
+    Creature* p3 = new Programmer( "ogawa" );
+    p3->runAway();
+//  p3->introduceOnself();
+//  p3->work();
+    delete p3;
+    
+    return 0;
+}
+```
+
+__出力結果__
+```
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
 ```
 
 ---
 
 ### Java
+1. class の代わりに interface とすると、インターフェースとなる。  
+   ただし、すべてのメンバメソッドは抽象メソッドでなければならない (クラスメソッドは抽象化できないのでそのままでOK)。  
+   また、メンバ変数を持つことができない。
+2. インターフェースを継承したクラスを定義する場合は、implements 修飾子を用いる。  
+   インターフェースを継承したインターフェースを定義する場合は、extends 修飾子を用いる。
+3. class の前に abstract を付けると、抽象クラスとなる。  
+   抽象クラスは抽象メソッドを持たなくてもよいが、持つのが普通である。
+4. 抽象メソッドは、抽象クラスとインターフェースでしか定義することができない。
+5. 通常通りの形で、抽象クラスを継承することができる。
+6. 抽象メソッドの実装は、継承したクラスで行う。
+7. インターフェースと抽象クラスは、インスタンス化することができない.
+
+__Creature.java__
 ```java
-int a = 10;
+// (1) インターフェース (生物).
+interface Creature
+{
+	// (4) 逃げる (生物によって逃げ方が違う).
+	public abstract void runAway();
+}
+```
+
+__Human.java__
+```java
+// (3) 抽象クラス (人間).
+abstract class Human implements Creature	// (2).
+{
+	protected String name;	// 名前.
+	
+	// コンストラクタ.
+	public Human( String i_name ) { name = i_name; }
+	
+	// (6) 逃げる.
+	@Override
+	public void runAway() { System.out.println( "走って逃げる" ); }
+	
+	// 自己紹介をする.
+	public void introduceOnself() { System.out.println( "私の名前は" + name + "です" ); }
+	
+	// (4) 仕事をする (人によって仕事の内容が違う).
+	public abstract void work();
+}
+```
+
+__Programmer.java__
+```java
+// クラス (プログラマ).
+class Programmer extends Human	// (5).
+{
+	// コンストラクタ.
+	public Programmer( String i_name ) { super( i_name ); }
+	
+	// (6) 仕事をする.
+	@Override
+	public void work() { System.out.println( "プログラムを書く" ); }
+}
+```
+
+__Main.java__
+```java
+class Main
+{
+    public static void main( String[] args )
+    {
+    	// (7) インターフェースと抽象クラスはインスタンス化することができない.
+//      Creature c = new Creature();
+//      Human h = new Human( "ogawa" );
+    	
+        // Programmer 型変数に、Programmer 型のインスタンスを代入.
+        Programmer p1 = new Programmer( "ogawa" );
+        p1.runAway();
+        p1.introduceOnself();
+        p1.work();
+
+        System.out.println( "===" );
+
+        // Human 型変数に、Programmer 型のインスタンスを代入.
+        Human p2 = new Programmer( "ogawa" );
+        p2.runAway();
+        p2.introduceOnself();
+        p2.work();
+
+        System.out.println( "===" );
+
+        // Creature 型変数に、Programmer 型のインスタンスを代入.
+        Creature p3 = new Programmer( "ogawa" );
+        p3.runAway();
+//      p3.introduceOnself();
+//      p3.work();
+    }
+}
+```
+
+__出力結果__
+```
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
 ```
 
 ---
 
 ### C# #
+1. class の代わりに interface とすると、インターフェースとなる。  
+   メンバメソッドは public な抽象メソッド扱いとなる (アクセス修飾子と abstract を付けることはできない)。  
+   インターフェースは、メンバ変数とクラスメソッドを持つことができない。
+2. class の前に abstract を付けると、抽象クラスとなる。  
+   抽象クラスは抽象メソッドを持たなくてもよいが、持つのが普通である。
+3. 通常通りの形で、インターフェースと抽象クラスを継承することができる。
+4. インターフェースで定義したメソッドの実装は、継承したクラスで行う。  
+   override は不要だが、アクセス修飾子は必ず public にしないといけない。
+5. 抽象メソッドは、抽象クラスでしか定義することができない。
+6. 抽象メソッドの実装は、継承したクラスで行う。ただし、override は必要である。
+7. インターフェースと抽象クラスは、インスタンス化することができない.
+
+__Creature.cs__
 ```csharp
-int a = 10;
+// (1) インターフェース (生物).
+interface Creature
+{
+	// 逃げる (生物によって逃げ方が違う).
+	void runAway();
+}
+```
+
+__Human.cs__
+```csharp
+using System;
+
+// (2) 抽象クラス (人間).
+abstract class Human : Creature	// (3).
+{
+	protected string name;    // 名前.
+
+	// コンストラクタ.
+	public Human( string i_name ) { name = i_name; }
+
+	// (4) 逃げる.
+	public void runAway() { Console.WriteLine( "走って逃げる" ); }
+
+	// 自己紹介をする.
+	public void introduceOnself() { Console.WriteLine( "私の名前は" + name + "です" ); }
+
+	// (5) 仕事をする (人によって仕事の内容が違う).
+	public abstract void work();
+}
+```
+
+__Programmer.cs__
+```csharp
+using System;
+
+// クラス (プログラマ).
+class Programmer : Human	// (3).
+{
+	// コンストラクタ.
+	public Programmer( string i_name ) : base( i_name ) {}
+
+	// (6) 仕事をする.
+	public override void work() { Console.WriteLine( "プログラムを書く" ); }
+}
+```
+
+__Program.cs__
+```csharp
+using System;
+
+class Program
+{
+	public static void Main( string[] args )
+	{
+		// (7) インターフェースと抽象クラスはインスタンス化することができない.
+//      Creature c = new Creature();
+//      Human h = new Human( "ogawa" );
+
+		// Programmer 型変数に、Programmer 型のインスタンスを代入.
+		Programmer p1 = new Programmer( "ogawa" );
+		p1.runAway();
+		p1.introduceOnself();
+		p1.work();
+
+		Console.WriteLine( "===" );
+
+		// Human 型変数に、Programmer 型のインスタンスを代入.
+		Human p2 = new Programmer( "ogawa" );
+		p2.runAway();
+		p2.introduceOnself();
+		p2.work();
+
+		Console.WriteLine( "===" );
+
+		// Creature 型変数に、Programmer 型のインスタンスを代入.
+		Creature p3 = new Programmer( "ogawa" );
+		p3.runAway();
+//      p3.introduceOnself();
+//      p3.work();
+	}
+}
+```
+
+__出力結果__
+```
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
 ```
 
 ---
 
 ### Objective-C
+1. Objective-C では、インターフェースではなくプロトコルと呼んでいる。  
+   @protocol を使用して定義する。  
+   メンバメソッドの実装を必須にするには @required を、実装を任意にするには @optional を指定する。  
+   何も指定しない場合は @required 扱いとなる。  
+   プロトコルはメンバ変数を持つことができない。
+2. プロトコルをクラスで採用する場合は <プロトコル名> を付ける。
+3. プロトコルの実装は、そのプロトコルを採用したクラスで行う。
+4. Objective-C には抽象クラスがないので、インスタンス化ができてしまう。  
+   継承先でメンバメソッドの振る舞いを決めたい場合は、基底のメンバメソッドに例外を仕込んでおくのが良さそう。
+5. プロトコルは、インスタンス化することができない.
+
+__interface.h__
 ```objectivec
-int a = 10;
+// (1) インターフェース (生物).
+@protocol Creature
+
+@required
+// 逃げる (生物によって逃げ方が違う).
+-(void) runAway;
+
+@optional
+
+@end /* @protocol Creature */
+
+//---------------------------------------
+// (1) インターフェース (人間).
+@protocol Human
+
+@required
+// 自己紹介をする.
+-(void) introduceOneself;
+
+// 仕事をする (人によって仕事の内容が違う).
+-(void) work;
+
+@end /* @protocol Human */
+```
+
+__human.h__
+```objectivec
+#import <Foundation/Foundation.h>
+
+// クラス (人間) の宣言.
+@interface HumanBase : NSObject <Creature, Human>　	// (2).
+{
+@protected
+    NSString* name; // 名前.
+}
+-(id) initWithName:(NSString*)i_name;
+
+@end /* @interface HumanBase */
+
+//---------------------------------------
+// クラス (人間) の実装.
+@implementation HumanBase
+
+// イニシャライザ.
+-(id) initWithName:(NSString*)i_name
+{
+    if( self = [super init] ){ name = i_name; }
+    return self;
+}
+
+// (3) 逃げる.
+-(void) runAway { NSLog( @"走って逃げる" ); }
+
+// 自己紹介をする.
+-(void) introduceOneself { NSLog( @"私の名前は%@です", name ); }
+
+// (4) 仕事をする (人によって仕事の内容が違う).
+-(void) work
+{
+    // 継承したクラスで実装する.
+    [NSException raise:NSInternalInconsistencyException
+                format:@"You must override %@ in a subclass",
+     NSStringFromSelector(_cmd)];
+}
+
+@end /* @@implementation HumanBase */
+```
+
+__programmer.h__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "human.h"
+
+// クラス (プログラマ) の宣言.
+@interface Programmer : HumanBase
+
+-(id) initWithName:(NSString*)i_name;
+
+@end /* @interface Programmer */
+
+//---------------------------------------
+// クラス (プログラマ) の実装.
+@implementation Programmer
+
+// イニシャライザ.
+-(id) initWithName:(NSString*)i_name
+{
+    self = [super initWithName:i_name];
+    return self;
+}
+
+// 仕事をする.
+-(void) work { NSLog( @"プログラムを書く" ); }
+
+@end /* @implementation Programmer */
+```
+
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "interface.h"
+#import "human.h"
+#import "programmer.h"
+
+int main( int argc, const char * argv[] )
+{
+    @autoreleasepool
+    {
+        // (4) 例外が発生する.
+//      HumanBase* h = [[HumanBase alloc] initWithName:@"ogawa"];
+//      [h work];
+        
+        // Programmer のポインタ型変数に、Programmer 型のインスタンスを代入.
+        Programmer* p1 = [[Programmer alloc] initWithName:@"ogawa"];
+        [p1 runAway];
+        [p1 introduceOneself];
+        [p1 work];
+        
+        NSLog( @"===" );
+        
+        // HumanBase のポインタ型変数に、Programmer 型のインスタンスを代入.
+        HumanBase* p2 = [[Programmer alloc] initWithName:@"ogawa"];
+        [p2 runAway];
+        [p2 introduceOneself];
+        [p2 work];
+        
+        NSLog( @"===" );
+        
+        // プロトコル Creature, Human に準拠した変数に、Programmer 型のインスタンスを代入.
+        id<Creature, Human> p3 = [[Programmer alloc] initWithName:@"ogawa"];
+        [p3 runAway];
+        [p3 introduceOneself];
+        [p3 work];
+    }
+    return 0;
+}
+```
+
+__出力結果__
+```
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
+私の名前はogawaです
+プログラムを書く
+===
+走って逃げる
+私の名前はogawaです
+プログラムを書く
 ```
 
 ---
 
 ### PHP
+TODO
+
 ```php
-$a = 10;
+
 ```
 
 ---
 
 ### JavaScript
+TODO
+
 ```js
-var a = 10;
+
 ```
 
 ---

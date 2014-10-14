@@ -71,9 +71,7 @@ public:
 
 __main.cpp__
 ```cpp
-#include <iostream>
 #include "capsule.h"
-using namespace std;
 
 int main( int argc, const char * argv[] )
 {
@@ -144,7 +142,7 @@ __ Check1.java (Capsule.java と同一パッケージ)__
 ```java
 package test1;
 
-public class Check1
+class Check1
 {
 	public void check()
 	{
@@ -172,7 +170,7 @@ __ Check2.java (Capsule.java と異なるパッケージ)__
 package test2;
 import test1.Capsule;
 
-public class Check2
+class Check2
 {
 	public void check()
 	{
@@ -210,7 +208,7 @@ public | 全範囲
 
 __Capsule.cs__
 ```csharp
-public class Capsule
+class Capsule
 {
 	// (1).
 	int none;
@@ -245,8 +243,6 @@ public class Capsule
 
 __Program.cs__
 ```csharp
-using System;
-
 class Program
 {
 	public static void Main( string[] args )
@@ -316,14 +312,14 @@ __capsule.h__
 -(void) pubFunc;
 -(void) check;
 
-@end
+@end /* @interface Capsule */
 
 //---------------------------------------
 @interface Test : NSObject
 
 -(void) check;
 
-@end
+@end /* @interface Test */
 ```
 
 __capsule.m__
@@ -349,7 +345,7 @@ __capsule.m__
     [self pubFunc];  // public関数.
 }
 
-@end
+@end /* @implementation Capsule */
 
 //---------------------------------------
 @implementation Test
@@ -362,7 +358,7 @@ __capsule.m__
     [c priFunc];    // private関数.
 }
 
-@end
+@end /* @implementation Test */
 ```
 
 __main.m__
@@ -399,7 +395,7 @@ int main( int argc, const char * argv[] )
 TODO
 
 ```php
-$a = 10;
+
 ```
 
 ---
@@ -408,7 +404,7 @@ $a = 10;
 TODO
 
 ```js
-var a = 10;
+
 ```
 
 ---
