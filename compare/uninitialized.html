@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="未初期化,小川,優樹,比較,逆引き,C言語,C,C++,Java,C#,Objective-C,ObjectiveC,Objective,PHP,JavaScript">
+	<meta name="author" content="小川優樹">
+	<title>プログラミング備忘録</title>
+</head>
+<body>
+	<xmp theme="cerulean" style="display:none;">
+
+## ~ 型 ~
+
+### C言語
+対象 | 未初期化時の値
+--- | ---
+変数 | 不定値
+配列 | 不定値
+構造体のメンバ変数 | 不定値
+
+__main.c__
+```c
+#include <stdio.h>
+
+#define NUM_OF(a) (sizeof(a) / sizeof(a[0]))
+#define ARRAY_SIZE  (10)
+
+typedef struct
+{
+    int a[ ARRAY_SIZE ];
+} Param;
+
+int main(int argc, const char * argv[])
+{
+    // 変数の未初期化.
+    int x;
+    printf( "%d\n", x );
+    
+    printf( "===\n" );
+    
+    // 配列の未初期化.
+    int a[ ARRAY_SIZE ];
+    for( int i = 0; i < NUM_OF(a); ++i )
+    {
+        printf( "%d\n", a[i] );
+    }
+    
+    printf( "===\n" );
+
+    // 構造体のメンバ変数の未初期化.
+    Param p;
+    for( int i = 0; i < NUM_OF(p.a); ++i )
+    {
+        printf( "%d\n", p.a[i] );
+    }
+    
+    return 0;
+}
+```
+
+---
+
+### C++
+対象 | 未初期化時の値
+--- | ---
+変数 | 不定値
+配列 | 不定値
+構造体のメンバ変数 | 不定値
+クラスのメンバ変数 | 不定値
+
+__main.cpp__
+```cpp
+#include <iostream>
+using namespace std;
+
+#define NUM_OF(a) (sizeof(a) / sizeof(a[0]))
+#define ARRAY_SIZE  (10)
+
+struct SParam
+{
+    int a[ ARRAY_SIZE ];
+};
+
+class CParam
+{
+public:
+    int a[ ARRAY_SIZE ];
+};
+
+int main( int argc, const char * argv[] )
+{
+    // 変数の未初期化.
+    int x;
+    cout << x << endl;
+    
+    cout << "===" << endl;
+    
+    // 配列の未初期化.
+    int a[ ARRAY_SIZE ];
+    for( int i = 0; i < NUM_OF(a); ++i )
+    {
+        cout << a[i] << endl;
+    }
+    
+    cout << "===" << endl;
+    
+    // 構造体のメンバ変数の未初期化.
+    SParam s;
+    for( int i = 0; i < NUM_OF(s.a); ++i )
+    {
+        cout << s.a[i] << endl;
+    }
+    
+    cout << "===" << endl;
+    
+    // クラスのメンバ変数の未初期化.
+    CParam c;
+    for( int i = 0; i < NUM_OF(c.a); ++i )
+    {
+        cout << c.a[i] << endl;
+    }
+    
+    return 0;
+}
+```
+
+---
+
+### Java
+対象 | 未初期化時の値
+--- | ---
+変数 | コンパイルエラー
+配列 | 型の既定値
+クラスのメンバ変数 | 型の既定値
+
+__Main.java__
+```java
+class Param
+{
+	int[] a = new int[ Main.ARRAY_NUM ];
+}
+
+class Main 
+{
+	static final int ARRAY_NUM = 10;
+	
+    public static void main( String[] args )
+    {
+    	// コンパイルエラー.
+    	// 変数の未初期化.
+//      int x;
+//      System.out.println( x );
+    	
+    	// 配列の未初期化.
+    	int[] a = new int[ ARRAY_NUM ];
+    	for( int i = 0; i < a.length; ++i )
+    	{
+    		System.out.println( a[i] );
+    	}
+    	
+    	System.out.println( "===" );
+    	
+    	// クラスのメンバ変数の未初期化.
+    	Param p = new Param();
+    	for( int i = 0; i < p.a.length; ++i )
+    	{
+    		System.out.println( p.a[i] );
+    	}
+    }
+}
+```
+
+---
+
+### C# #
+対象 | 未初期化時の値
+--- | ---
+変数 | コンパイルエラー
+配列 | 型の既定値
+構造体のメンバ変数 | 型の既定値
+クラスのメンバ変数 | 型の既定値
+
+__Program.cs__
+```csharp
+using System;
+
+struct SParam
+{
+	public int[] a;
+
+	public SParam( int dummy ){ a = new int[ Program.ARRAY_SIZE ]; }
+}
+
+class CParam
+{
+	public int[] a = new int[ Program.ARRAY_SIZE ];
+}
+
+class Program
+{
+	public static readonly int ARRAY_SIZE = 10;
+
+	public static void Main( string[] args )
+	{
+		// コンパイルエラー.
+		// 変数の未初期化.
+//      int x;
+//      Console.WriteLine (x);
+
+		// 配列の未初期化.
+		var a = new int[ ARRAY_SIZE ];
+		for( int i = 0; i < a.Length; ++i )
+		{
+			Console.WriteLine( a[i] );
+		}
+
+		Console.WriteLine( "===" );
+
+		// 構造体のメンバ変数の未初期化.
+		var s = new SParam( 0 );
+		for( int i = 0; i < s.a.Length; ++i )
+		{
+			Console.WriteLine( s.a[i] );
+		}
+
+		Console.WriteLine( "===" );
+
+		// クラスのメンバ変数の未初期化.
+		var c = new CParam();
+		for( int i = 0; i < c.a.Length; ++i )
+		{
+			Console.WriteLine( c.a[i] );
+		}
+	}
+}
+```
+
+---
+
+### Objective-C
+対象 | 未初期化時の値
+--- | ---
+変数 | 不定値
+配列 | 不定値
+構造体のメンバ変数 | 不定値
+クラスのメンバ変数 | 0
+
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+
+#define NUM_OF(a) (sizeof(a) / sizeof(a[0]))
+#define ARRAY_SIZE  (10)
+
+typedef struct
+{
+    int a[ARRAY_SIZE];
+} SParam;
+
+@interface CParam : NSObject
+{
+@public
+    int a[ARRAY_SIZE];
+}
+@end /* @interface CParam */
+
+@implementation CParam
+@end /* @implementation CParam */
+
+int main( int argc, const char * argv[] )
+{
+    @autoreleasepool
+    {
+        // 変数の未初期化.
+        int x;
+        NSLog( @"%d", x );
+        
+        NSLog( @"===" );
+        
+        // 配列の未初期化.
+        int a[ ARRAY_SIZE ];
+        for( int i = 0; i < NUM_OF(a); ++i )
+        {
+            NSLog( @"%d", a[i] );
+        }
+        
+        NSLog( @"===" );
+        
+        // 構造体のメンバ変数の未初期化.
+        SParam s;
+        for( int i = 0; i < NUM_OF(s.a); ++i )
+        {
+            NSLog( @"%d", s.a[i] );
+        }
+        
+        NSLog( @"===" );
+        
+        // クラスのメンバ変数の未初期化.
+        CParam* c = [[CParam alloc] init];
+        for( int i = 0; i < NUM_OF(c->a); ++i )
+        {
+            NSLog( @"%d", c->a[i] );
+        }
+    }
+
+    return 0;
+}
+```
+
+---
+
+### PHP
+TODO
+
+```php
+
+```
+
+---
+
+### JavaScript
+TODO
+
+```js
+
+```
+
+---
+
+[戻る](../index.html)
+
+---
+
+&copy; 2014 小川優樹 all rights reserved.
+
+	</xmp>
+	<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</body>
+</html>
