@@ -17,7 +17,7 @@
 ---
 
 ### C++
-1. アクセス修飾子は構造体(struct)とクラス(class)内で指定することができる。
+1. アクセス修飾子は構造体 (struct) とクラス (class) 内で指定することができる。
 2. アクセス修飾子は範囲毎に指定する。
 3. アクセス修飾子を指定しない場合、構造体では public 扱い、クラスでは private 扱いとなる。
 
@@ -55,14 +55,14 @@ public:
     void check()
     {
         // クラス内からアクセス可.
-        none = 0;   // 指定のない変数.
-        noneFunc(); // 指定のない関数.
-        pri = 0;    // private変数.
-        priFunc();  // private関数.
-        pro = 0;    // protected変数.
-        proFunc();  // protected関数.
-        pub = 0;    // public変数.
-        pubFunc();  // public関数.
+        none = 0;   // 指定のないフィールド.
+        noneFunc(); // 指定のないメソッド.
+        pri = 0;    // privateフィールド.
+        priFunc();  // privateメソッド.
+        pro = 0;    // protectedフィールド.
+        proFunc();  // protectedメソッド.
+        pub = 0;    // publicフィールド.
+        pubFunc();  // publicメソッド.
     }
 };
 
@@ -78,16 +78,16 @@ int main( int argc, const char * argv[] )
     Capsule c;
     
     // クラス外からアクセス不可.
-//  c.none = 0;   // 指定のない変数.
-//  c.noneFunc(); // 指定のない関数.
-//  c.pri = 0;    // private変数.
-//  c.priFunc();  // private関数.
-//  c.pro = 0;    // protected変数.
-//  c.proFunc();  // protected関数.
+//  c.none = 0;   // 指定のないフィールド.
+//  c.noneFunc(); // 指定のないメソッド.
+//  c.pri = 0;    // privateフィールド.
+//  c.priFunc();  // privateメソッド.
+//  c.pro = 0;    // protectedフィールド.
+//  c.proFunc();  // protectedメソッド.
     
     // クラス外からアクセス可.
-    c.pub = 0;    // public変数.
-    c.pubFunc();  // public関数.
+    c.pub = 0;    // publicフィールド.
+    c.pubFunc();  // publicメソッド.
     
     return 0;
 }
@@ -96,7 +96,7 @@ int main( int argc, const char * argv[] )
 ---
 
 ### Java
-1. アクセス修飾子はそれぞれのメンバに個別で指定する。
+1. アクセス修飾子はそれぞれのフィールド、メソッドに個別で指定する。
 
 修飾子 | アクセスを許可する範囲
 --- | ---
@@ -126,14 +126,14 @@ public class Capsule
 	public void check()
 	{
 		// クラス内からアクセス可.
-		none = 0;	// 指定のない変数.
-		noneFunc();	// 指定のない関数.
-		pri = 0;	// private変数.
-		priFunc();	// private関数.
-		pro = 0;	// protected変数.
-		proFunc();	// protected関数.
-		pub = 0;	// public変数.
-		pubFunc();	// public関数.
+		none = 0;	// 指定のないフィールド.
+		noneFunc();	// 指定のないメソッド.
+		pri = 0;	// privateフィールド.
+		priFunc();	// privateメソッド.
+		pro = 0;	// protectedフィールド.
+		proFunc();	// protectedメソッド.
+		pub = 0;	// publicフィールド.
+		pubFunc();	// publicメソッド.
 	}
 }
 ```
@@ -149,18 +149,18 @@ class Check1
 		Capsule c = new Capsule();
 		
 		// 同一パッケージ内 + クラス外からアクセス不可.
-//      c.pri = 0;	// private変数.
-//      c.priFunc();	// private関数.
+//      c.pri = 0;	// privateフィールド.
+//      c.priFunc();	// privateメソッド.
 		
 		// 同一パッケージ内からアクセス可.
-		c.none = 0;	// 指定のない変数.
-		c.noneFunc();	// 指定のない関数.
-		c.pro = 0;	// protected変数.
-		c.proFunc();	// protected関数.
+		c.none = 0;	// 指定のないフィールド.
+		c.noneFunc();	// 指定のないメソッド.
+		c.pro = 0;	// protectedフィールド.
+		c.proFunc();	// protectedメソッド.
 		
 		// 同一パッケージ内 + クラス外からアクセス可.
-		c.pub = 0;	// public変数.
-		c.pubFunc();	// public関数.
+		c.pub = 0;	// publicフィールド.
+		c.pubFunc();	// publicメソッド.
 	}
 }
 ```
@@ -177,16 +177,16 @@ class Check2
 		Capsule c = new Capsule();
 		
 		// クラス外からアクセス不可.
-//      c.none = 0;	// 指定のない変数.
-//      c.noneFunc();	// 指定のない関数.
-//      c.pri = 0;	// private変数.
-//      c.priFunc();	// private関数.
-//      c.pro = 0;	// protected変数.
-//      c.proFunc();	// protected関数.
+//      c.none = 0;	// 指定のないフィールド.
+//      c.noneFunc();	// 指定のないメソッド.
+//      c.pri = 0;	// privateフィールド.
+//      c.priFunc();	// privateメソッド.
+//      c.pro = 0;	// protectedフィールド.
+//      c.proFunc();	// protectedメソッド.
 		
 		// クラス外からアクセス可.
-		c.pub = 0;	// public変数.
-		c.pubFunc();	// public関数.
+		c.pub = 0;	// publicフィールド.
+		c.pubFunc();	// publicメソッド.
 	}
 }
 ```
@@ -194,7 +194,7 @@ class Check2
 ---
 
 ### C# #
-1. アクセス修飾子はそれぞれのメンバに個別で指定する。
+1. アクセス修飾子はそれぞれのフィールド、メソッドに個別で指定する。
 2. アクセス修飾子を指定しない場合、private 扱いとなる。
 3. internal については、[ここ](http://www.atmarkit.co.jp/fdotnet/csharp_abc/csharp_abc_022/csharp_abc05.html)の説明が参考になりました。
 
@@ -227,16 +227,16 @@ class Capsule
 	public void check()
 	{
 		// クラス内からアクセス可.
-		none = 0;   // 指定のない変数.
-		noneFunc(); // 指定のない関数.
-		pri = 0;    // private変数.
-		priFunc();  // private関数.
-		pro = 0;    // protected変数.
-		proFunc();  // protected関数.
-		inter = 0;	// internal変数.
-		interFunc();	// internal関数.
-		pub = 0;    // public変数.
-		pubFunc();  // public関数.
+		none = 0;   // 指定のないフィールド.
+		noneFunc(); // 指定のないメソッド.
+		pri = 0;    // privateフィールド.
+		priFunc();  // privateメソッド.
+		pro = 0;    // protectedフィールド.
+		proFunc();  // protectedメソッド.
+		inter = 0;	// internalフィールド.
+		interFunc();	// internalメソッド.
+		pub = 0;    // publicフィールド.
+		pubFunc();  // publicメソッド.
 	}
 }
 ```
@@ -250,20 +250,20 @@ class Program
 		var c = new Capsule();
 
 		// 同一プロジェクト内 + クラス外からアクセス不可.
-//      c.none = 0;   // 指定のない変数.
-//      c.noneFunc(); // 指定のない関数.
-//      c.pri = 0;    // private変数.
-//      c.priFunc();  // private関数.
-//      c.pro = 0;    // protected変数.
-//      c.proFunc();  // protected関数.
+//      c.none = 0;   // 指定のないフィールド.
+//      c.noneFunc(); // 指定のないメソッド.
+//      c.pri = 0;    // privateフィールド.
+//      c.priFunc();  // privateメソッド.
+//      c.pro = 0;    // protectedフィールド.
+//      c.proFunc();  // protectedメソッド.
 
 		// 同一プロジェクト内からアクセス可.
-		c.inter = 0;	// internal変数.
-		c.interFunc();	// internal関数.
+		c.inter = 0;	// internalフィールド.
+		c.interFunc();	// internalメソッド.
 
 		// クラス外からアクセス可.
-		c.pub = 0;    // public変数.
-		c.pubFunc();  // public関数.
+		c.pub = 0;    // publicフィールド.
+		c.pubFunc();  // publicメソッド.
 	}
 }
 ```
@@ -272,8 +272,8 @@ class Program
 
 ### Objective-C
 1. アクセス修飾子は範囲毎に指定する。
-2. アクセス修飾子はメンバメソッドには指定できない。  
-   メンバメソッドをヘッダに書けば全範囲からアクセスができ、実装ファイルに書けばそのファイル内のみからアクセスができる (2')。
+2. アクセス修飾子はメソッドには指定できない。  
+   メソッドをヘッダに書けば全範囲からアクセスができ、実装ファイルに書けばそのファイル内のみからアクセスができる (2')。
 3. アクセス修飾子を指定しない場合、@protected 扱いとなる。
 
 修飾子 | アクセスを許可する範囲
@@ -336,13 +336,13 @@ __capsule.m__
 -(void) check
 {
     // クラス内からアクセス可.
-    none = 0;   // 指定のない変数.
-    pri = 0;    // private変数.
-    pro = 0;    // protected変数.
-    pac = 0;    // package変数.
-    pub = 0;    // public変数.
-    [self priFunc];  // private関数.
-    [self pubFunc];  // public関数.
+    none = 0;   // 指定のないフィールド.
+    pri = 0;    // privateフィールド.
+    pro = 0;    // protectedフィールド.
+    pac = 0;    // packageフィールド.
+    pub = 0;    // publicフィールド.
+    [self priFunc];  // privateメソッド.
+    [self pubFunc];  // publicメソッド.
 }
 
 @end /* @implementation Capsule */
@@ -355,7 +355,7 @@ __capsule.m__
     Capsule* c = [[Capsule alloc] init];
     
     // (2') 同一ファイルからアクセス可.
-    [c priFunc];    // private関数.
+    [c priFunc];    // privateメソッド.
 }
 
 @end /* @implementation Test */
@@ -373,17 +373,17 @@ int main( int argc, const char * argv[] )
         Capsule* c = [[Capsule alloc] init];
         
         // 同一フレームワーク内 + クラス外からアクセス不可.
-//      c->none = 0;    // 指定のない変数.
-//      c->pri = 0; // private変数.
-//      c->pro = 0; // protected変数.
-//      [c priFunc];    // private関数.
+//      c->none = 0;    // 指定のないフィールド.
+//      c->pri = 0; // privateフィールド.
+//      c->pro = 0; // protectedフィールド.
+//      [c priFunc];    // privateメソッド.
         
         // 同一フレームワーク内からアクセス可.
-        c->pac = 0; // package変数.
+        c->pac = 0; // packageフィールド.
         
         // クラス外からアクセス可.
-        c->pub = 0; // public変数.
-        [c pubFunc];    // public関数.
+        c->pub = 0; // publicフィールド.
+        [c pubFunc];    // publicメソッド.
     }
     return 0;
 }

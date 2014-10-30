@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="クラス、フィールド、メソッド、小川,優樹,比較,逆引き,C言語,C,C++,Java,C#,Objective-C,ObjectiveC,Objective,PHP,JavaScript">
+	<meta name="author" content="小川優樹">
+	<title>プログラミング備忘録</title>
+</head>
+<body>
+	<xmp theme="cerulean" style="display:none;">
+
+## ~ クラスフィールド、クラスメソッド ~
+
+### C言語
+* なし
+
+---
+
+### C++
+1. フィールド、メソッドに static を付けると、クラスフィールド、クラスメソッドとなる。
+2. クラスメソッドに virtual を付けることはできない。
+3. 基底クラスと同じクラスメソッドを派生クラスで再定義することで、そのクラスメソッドをオーバーライドすることができる。
+4. 派生クラスから、「基底クラス名::クラスメソッド」という書き方で基底クラスのクラスメソッドにアクセスすることができる。
+5. サンプルのような形で、クラスフィールドを初期化することができる。
+6. 「クラス名::クラスメソッド」という書き方で、クラスメソッドを呼び出せる。
+7. インスタンスからクラスメソッドを呼び出すこともできる。
+
+__class.h__
+```cpp
+#include <iostream>
+using namespace std;
+
+class Base
+{
+    class Check
+    {
+    public:
+        Check() { cout << "Base::initialize" << endl; }
+    };
+    
+private:
+    // (1) クラスフィールド.
+    static int val;
+    static Check check;
+    
+public:
+    // (1)(2) クラスメソッド.
+    static /*virtual*/ void msg() { cout << "Base::msg" << endl; }
+};
+
+//---------------------------------------
+class Derived : public Base
+{
+public:
+    // (3) クラスメソッドのオーバーライド.
+    static void msg()
+    {
+    	cout << "Derived::msg" << endl;
+    	Base::msg();	// (4) 基底クラスのクラスメソッドの呼び出し.
+    }
+};
+
+//---------------------------------------
+// (5) クラスフィールドの初期化.
+int Base::val = 0;
+Base::Check Base::check;
+```
+
+__main.cpp__
+```cpp
+#include <iostream>
+#include "class.h"
+using namespace std;
+
+int main(int argc, const char * argv[])
+{
+    // (6) 基底クラスのクラスメソッドの呼び出し.
+    Base::msg();
+    
+    // (6) 派生クラスのクラスメソッドの呼び出し.
+    cout << "---(a)---" << endl;
+    Derived::msg();
+
+    // (7) 基底クラスのインスタンスから、クラスメソッドの呼び出し.
+    cout << "---(b)---" << endl;
+    Base b;
+    b.msg();
+    
+    // (7) 派生クラスのインスタンスから、クラスメソッドの呼び出し.
+    cout << "---(c)---" << endl;
+    Derived d;
+    d.msg();
+    
+    return 0;
+}
+```
+
+__出力結果__
+```
+Base::initialize
+Base::msg
+---(a)---
+Derived::msg
+Base::msg
+---(b)---
+Base::msg
+---(c)---
+Derived::msg
+Base::msg
+```
+
+---
+
+### Java
+1. フィールド、メソッドに static を付けると、クラスフィールド、クラスメソッドとなる。
+2. static{ } 内でクラスフィールドを初期化することができる。
+3. 基底クラスと同じクラスメソッドを派生クラスで再定義することで、そのクラスメソッドをオーバーライドすることができる。  
+   ただし、@Override を付けることができない。
+4. 派生クラスから、「super.クラスメソッド」という書き方で、基底クラスのクラスメソッドにアクセスすることができない。
+5. 「クラス名.クラスメソッド」という書き方で、クラスメソッドを呼び出せる。
+6. 警告は出るが、インスタンスからクラスメソッドを呼び出すこともできる (使わない方が良さそう)。
+
+__Class.java__
+```java
+class Base
+{
+	// (1) クラスフィールド.
+	public static int val;
+	
+	// (2) クラスフィールドの初期化.
+	static
+	{
+		System.out.println( "Base::initialize" );
+		val = 0;
+	}
+	
+	// (1) クラスメソッド.
+	public static void msg() { System.out.println( "Base::msg" ); }
+}
+
+//---------------------------------------
+class Derived extends Base
+{
+	// (2) クラスフィールドの初期化.
+	static { System.out.println( "Derived::initialize" ); }
+	
+	// (3) クラスメソッドのオーバーライド.
+	//@Override
+	public static void msg()
+	{
+		System.out.println( "Derived::msg" );
+
+		// (4) 基底クラスのクラスメソッドを呼び出すことができない.
+		//super.msg();
+	}
+}
+```
+
+__Main.java__
+```java
+public class Main
+{
+	public static void main( String[] args )
+	{
+		// (5) 基底クラスのクラスメソッドの呼び出し.
+		Base.msg();
+		
+		// (5) 派生クラスのクラスメソッドの呼び出し.
+		System.out.println("---(a)---");
+		Derived.msg();
+		
+		// (6) 警告が出る.
+		// 基底クラスのインスタンスから、クラスメソッドの呼び出し.
+		System.out.println("---(b)---");
+		Base b = new Base();
+		b.msg();
+		
+		// (6) 警告が出る.
+		// 派生クラスのインスタンスから、クラスメソッドの呼び出し.
+		System.out.println("---(c)---");
+		Derived d = new Derived();
+		d.msg();
+	}
+}
+```
+
+__出力結果__
+```
+Base::initialize
+Base::msg
+---(a)---
+Derived::initialize
+Derived::msg
+---(b)---
+Base::msg
+---(c)---
+Derived::msg
+```
+
+---
+
+### C# #
+1. フィールド、メソッドに static を付けると、クラスフィールド、クラスメソッドとなる。
+2. 静的コンストラクタ内でクラスフィールドを初期化することができる。  
+   ただし、静的コンストラクタにはアクセス修飾子を付けることができない。
+3. 基底クラスと同じクラスメソッドを派生クラスで再定義することで、そのクラスメソッドをオーバーライドすることができる。  
+   ただし、派生クラスのクラスメソッドに new を付けないと警告が出る。
+4. 派生クラスから、「base.クラスメソッド」という書き方で、基底クラスのクラスメソッドにアクセスすることができない。
+5. 「クラス名.クラスメソッド」という書き方で、クラスメソッドを呼び出せる。
+6. インスタンスからクラスメソッドを呼び出すことができない。
+
+__Class.cs__
+```csharp
+public class Base
+{
+	// (1) クラスフィールド.
+	public static int val;
+
+	// (2) クラスフィールドの初期化.
+	/*public*/ static Base()
+	{
+		Console.WriteLine( "Base::initialize" );
+		val = 0;
+	}
+
+	// (1) クラスメソッド.
+	public static void msg() { Console.WriteLine( "Base::msg" ); }
+}
+
+//---------------------------------------
+public class Derived : Base
+{
+	// (2) クラスフィールドの初期化.
+	/*public*/ static Derived() { Console.WriteLine( "Derived::initialize" ); }
+
+	// (3) クラスメソッドのオーバーライド.
+	public static new void msg()
+	{
+		Console.WriteLine( "Derived::msg" );
+
+		// (4) 基底クラスのクラスメソッドを呼び出すことができない.
+		//base.msg();
+	}
+}
+```
+
+__Program.cs__
+```csharp
+class Program
+{
+	public static void Main (string[] args)
+	{
+		// (5) 基底クラスのクラスメソッドの呼び出し.
+		Base.msg();
+
+		// (5) 派生クラスのクラスメソッドの呼び出し.
+		Console.WriteLine( "---(a)---" );
+		Derived.msg();
+
+		// (6) 基底クラスのインスタンスから、クラスメソッドを呼び出すことができない.
+		//Base b = new Base ();
+		//b.msg ();
+	}
+}
+```
+
+__出力結果__
+```
+Base::initialize
+Base::msg
+---(a)---
+Derived::initialize
+Derived::msg
+```
+
+---
+
+### Objective-C
+1. クラスフィールドは、C言語の静的グローバル変数を用いて実現する。
+2. メソッドの先頭の - を + にするとクラスメソッドとなる。
+3. initialize クラスメソッド内でクラスフィールドを初期化することができる。
+4. 基底クラスと同じクラスメソッドを派生クラスで再定義することで、そのクラスメソッドをオーバーライドすることができる。  
+5. 派生クラスから、[super クラスメソッド] という書き方で基底クラスのクラスメソッドにアクセスすることができる。
+6. [クラス名 クラスメソッド] という書き方で、クラスメソッドを呼び出せる。
+7. インスタンスからクラスメソッドを呼び出すことができない。
+
+__class.h__
+```objectivec
+#import <Foundation/Foundation.h>
+
+@interface Base : NSObject
++ (void) initialize;
++ (void) msg;
+@end
+
+//---------------------------------------
+@implementation Base
+// (1) クラスフィールド.
+static int val;
+
+// (3) クラスフィールドの初期化.
++ (void) initialize
+{
+    printf( "Base::initialize\n" );
+    val = 0;
+}
+
+// (2) クラスメソッド.
++ (void) msg { printf( "Base::msg\n" ); }
+@end
+
+//---------------------------------------
+@interface Derived : Base
++ (void) initialize;
++ (void) msg;
+@end
+
+//---------------------------------------
+@implementation Derived
+
+// (3) クラスフィールドの初期化.
++ (void) initialize { printf( "Derived::initialize\n" ); }
+
+// (4) クラスメソッドのオーバーライド.
++ (void) msg
+{
+    printf( "Derived::msg\n" );
+    
+    // (5) 基底クラスのクラスメソッドの呼び出し.
+    [super msg];
+}
+@end
+```
+
+__main.m__
+```objectivec
+#import <Foundation/Foundation.h>
+#import "class.h"
+
+int main(int argc, const char * argv[])
+{
+    @autoreleasepool
+    {
+        // (6) 基底クラスのクラスメソッドの呼び出し.
+        [Base msg];
+        
+        // (6) 派生クラスのクラスメソッドの呼び出し.
+        printf( "---(a)---\n" );
+        [Derived msg];
+        
+        // (7) 基底クラスのインスタンスから、クラスメソッドを呼び出すことができない.
+        //Base* b = [[Base alloc] init];
+        //[b msg];
+    }
+    return 0;
+}
+
+```
+
+__出力結果__
+```
+Base::initialize
+Base::msg
+-------
+Derived::initialize
+Derived::msg
+Base::msg
+```
+
+---
+
+### PHP
+TODO
+
+```php
+
+```
+
+---
+
+### JavaScript
+TODO
+
+```js
+
+```
+
+---
+
+[戻る](../index.html)
+
+---
+
+&copy; 2014 小川優樹 all rights reserved.
+
+	</xmp>
+	<script src="http://strapdownjs.com/v/0.2/strapdown.js"></script>
+</body>
+</html>
